@@ -502,7 +502,9 @@ td.wk {
   color: var(--zus-blue);
 }
 .tag {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   background: var(--boost);
   border: 1px solid var(--boost-line);
   color: #8a6420;
@@ -511,6 +513,25 @@ td.wk {
   font-size: 0.7rem;
   font-weight: 600;
   margin-top: 3px;
+}
+/* copy-hashtags button — sits inside the .tag pill, to the right of the text */
+.copytags {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  margin: -2px -3px -2px 0;
+  border: 0;
+  background: none;
+  color: #8a6420;
+  cursor: pointer;
+  border-radius: 4px;
+  opacity: 0.65;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+.copytags:hover {
+  opacity: 1;
+  background: var(--boost-line);
 }
 .post {
   font-size: 0.72rem;

@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 
-import { BookOpen, ClipboardList, ExternalLink, Info } from "lucide-react";
+import { BookOpen, Check, ClipboardList, Copy, ExternalLink, Info } from "lucide-react";
 
 import { track } from "./utils/analytics.js";
 import { BIWEEKLY_MAX, BONUS_TASKS, BOOSTER_META, BOOSTERS, buildDayPlan, CHALLENGE_START, WEEK_MAX, WEEKLY_TASKS } from "./data.js";
@@ -160,6 +160,42 @@ function DetailsDrawer({ open, onClose }) {
         </div>
       </aside>
     </div>
+  );
+}
+
+// Copy-to-clipboard button for a week's hashtag line. Lives in a toggle-able row,
+// so it stops click/keyboard events from bubbling up and collapsing the week.
+function CopyTags({ text, week }) {
+  const [copied, setCopied] = useState(false);
+  const timerRef = useRef(null);
+
+  useEffect(() => () => clearTimeout(timerRef.current), []);
+
+  const copy = (event) => {
+    event.stopPropagation();
+    navigator.clipboard?.writeText(text).then(() => {
+      setCopied(true);
+      track("copy_tags", { week });
+      clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => setCopied(false), 1500);
+    });
+  };
+
+  return (
+    <button
+      type="button"
+      className="copytags"
+      onClick={copy}
+      onKeyDown={(event) => event.stopPropagation()}
+      aria-label={copied ? "Hashtags copied" : "Copy hashtags"}
+      title={copied ? "Copied!" : "Copy hashtags"}
+    >
+      {copied ? (
+        <Check size={13} strokeWidth={2.5} aria-hidden="true" />
+      ) : (
+        <Copy size={13} strokeWidth={2.25} aria-hidden="true" />
+      )}
+    </button>
   );
 }
 
@@ -359,7 +395,10 @@ export default function App() {
                             <br />
                           </>
                         )}
-                        <span className="tag">{b.tags}</span>
+                        <span className="tag">
+                          {b.tags}
+                          <CopyTags text={b.tags} week={b.wk} />
+                        </span>
                         {/* wiki link only shows when the week is expanded */}
                         {open && BOOSTER_META[b.phase]?.wikiUrl && (
                           <>
