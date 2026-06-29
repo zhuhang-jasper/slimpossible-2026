@@ -5,10 +5,27 @@
 // pollute production stats with our own testing. The Measurement ID is injected
 // from the VITE_GA_ID GitHub Actions variable during the Pages build.
 
+import { STORAGE_KEY, SUPPORTED_LANGS } from "../i18n/index.js";
+
 const GA_ID = import.meta.env.VITE_GA_ID;
 const APP_VERSION = import.meta.env.VITE_APP_VERSION;
 
 let initialized = false;
+
+/**
+ * The language i18next will load this session, read from the same localStorage
+ * key the detector uses. Mirrors i18next's resolution: an untouched first visit
+ * (no stored value) lands on the "en" fallback. Returned as a base language so
+ * a stored "ms-MY" reports as "ms", matching nonExplicitSupportedLngs.
+ */
+function getLoadedLang() {
+  if (typeof window === "undefined") {
+    return "en";
+  }
+  const stored = window.localStorage.getItem(STORAGE_KEY);
+  const base = stored ? stored.split("-")[0] : "en";
+  return SUPPORTED_LANGS.includes(base) ? base : "en";
+}
 
 /**
  * How the app is being viewed:
@@ -90,9 +107,10 @@ export function initAnalytics() {
   window.gtag = gtag;
 
   gtag("js", new Date());
-  // app_version sticks to every hit (incl. the automatic page_view) so all stats
-  // can be sliced by release.
-  gtag("config", GA_ID, { app_version: APP_VERSION });
+  // app_version and language stick to every hit (incl. the automatic page_view)
+  // so all stats can be sliced by release and by the language a session loaded
+  // in — not just the active switches captured by the `switch_language` event.
+  gtag("config", GA_ID, { app_version: APP_VERSION, language: getLoadedLang() });
 
   const displayMode = getDisplayMode();
   track("app_open", {
