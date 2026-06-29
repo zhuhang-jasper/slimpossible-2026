@@ -76,25 +76,38 @@ header.hero {
   top: 8px;
   z-index: 10; /* pinned with an 8px gap; table header stacks below via --hero-h */
 }
-/* Drawer entry point #1: info icon, top-right of the hero. */
+/* Title row: hero title on the left, controls (switcher + info icon) on the right,
+   vertically centred against the title so the whole row aligns on one baseline. */
+.hero-titlerow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.hero-controls {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  /* pull the icon toward the hero's right edge, trimming most of the 20px right padding */
+  margin-right: -8px;
+}
+/* Drawer entry point #1: bare question-mark icon, right of the language selector. */
 .hero-info {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 34px;
-  height: 34px;
+  flex: 0 0 auto;
   display: grid;
   place-items: center;
-  font-size: 1.05rem;
-  line-height: 1;
+  padding: 0;
   border: 0;
-  border-radius: 50%;
   background: none;
   color: #fff;
   cursor: pointer;
   transition:
     opacity 0.15s ease,
     transform 0.15s ease;
+}
+.hero-info svg {
+  display: block;
 }
 .hero-info:hover {
   opacity: 0.75;
@@ -1234,4 +1247,49 @@ td.total {
 }
 .install-card-cta:hover {
   background: #16207a;
+}
+
+/* ---------- Language switcher (EN / BM dropdown) ---------- */
+/* Lives inline in .hero-controls (top-right of the hero), on the blue gradient.
+   A native <select> styled as a translucent-white pill (matching .hero-link),
+   with its default arrow suppressed and a custom caret overlaid on the right. */
+.lang-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.lang-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 5px 28px 5px 11px;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.lang-select:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+.lang-select:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 1px;
+}
+/* The dropdown list itself renders in the OS popup; force readable colors there. */
+.lang-select option {
+  color: var(--ink);
+  background: #fff;
+}
+.lang-caret {
+  position: absolute;
+  right: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+  pointer-events: none;
 }

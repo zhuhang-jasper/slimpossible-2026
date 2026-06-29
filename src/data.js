@@ -1,71 +1,54 @@
 // ─────────────────────────────────────────────────────────────
-// EDIT THIS FILE to change the timetable. Everything below feeds
-// the page. Running totals are computed automatically from WEEK_MAX.
+// EDIT THIS FILE to change the timetable STRUCTURE (icons, points,
+// dates, rotation order, wiki links). All user-facing TEXT lives in
+// the i18n bundles (src/i18n/locales/{en,ms}.js) and is looked up by
+// the stable keys below. Running totals are computed from WEEK_MAX.
 // ─────────────────────────────────────────────────────────────
 
-// Points you can earn EVERY week (W1–W14)
+// Points you can earn EVERY week (W1–W14). `key` indexes into the
+// `weeklyTasks.<key>` translation bundle for title/cap/desc; `rows`
+// pair a label key with its point value.
 export const WEEKLY_TASKS = [
   {
+    key: "weighIn",
     icon: "⚖️",
-    title: "Weigh-in",
-    cap: "cap 40/wk",
-    desc: "Every Monday. Photo/video of scale (feet + display visible). Only losses score.",
     rows: [
-      ["Maintain or gain", 0],
-      ["Lose > 0.5 kg", 10],
-      ["Lose > 1 kg", 40],
+      ["maintainOrGain", 0],
+      ["lose05", 10],
+      ["lose1", 40],
     ],
   },
   {
+    key: "steps",
     icon: "👣",
-    title: "Step count",
-    cap: "cap 100/wk",
-    desc: "Log once weekly. Screenshot of any step app (Google Fit, Fitbit…).",
     rows: [
-      ["20k steps", 20],
-      ["25k steps", 25],
-      ["30k steps", 30],
-      ["35k steps", 35],
-      ["> 40k steps", 100],
+      ["s20k", 20],
+      ["s25k", 25],
+      ["s30k", 30],
+      ["s35k", 35],
+      ["s40k", 100],
     ],
   },
   {
+    key: "workouts",
     icon: "🏃",
-    title: "Workouts",
-    cap: "cap 100/wk",
-    desc: "On separate days. Photo/video showing your face.",
     rows: [
-      ["1 workout", 30],
-      ["2 workouts", 60],
-      ["3+ workouts", 100],
+      ["w1", 30],
+      ["w2", 60],
+      ["w3", 100],
     ],
   },
 ];
 
-// Bonus actionables — BOOSTERS ONLY
+// Bonus actionables — BOOSTERS ONLY. `key` indexes into `bonusTasks.<key>`.
 export const BONUS_TASKS = [
-  {
-    icon: "📲",
-    title: "Join booster (Lark Base)",
-    badge: "30 pts",
-    desc: "Complete the week's booster and upload your proof to the Lark Base Tracker. Required — earns the base 30 pts.",
-  },
-  {
-    icon: "📣",
-    title: "Post on ZUS Moments",
-    badge: "+10 pts",
-    desc: "On a booster, also posting to ZUS Moments with the hashtags lifts that booster from 30 → 40 pts.",
-  },
-  {
-    icon: "🥤",
-    title: "Show your ZUS merch",
-    badge: "in clip",
-    desc: "In Pace / Hydration booster clips, feature your ZUS tumbler, cup, canned drink, or merch to strengthen the submission.",
-  },
+  { key: "joinBooster", icon: "📲" },
+  { key: "postMoments", icon: "📣" },
+  { key: "showMerch", icon: "🥤" },
 ];
 
 // Challenge start (W1 Monday). Weeks are exactly 7 days; the current-week
-// highlight is computed from this date, so the display strings below stay free-text.
+// highlight is computed from this date, so the display strings stay free-text.
 export const CHALLENGE_START = new Date(2026, 5, 22); // 22 Jun 2026 (month is 0-based)
 
 // Realistic max points per week, used as the leaderboard benchmark.
@@ -79,45 +62,17 @@ export const BIWEEKLY_MAX = WEEK_MAX * 2; // 480 over each 2-week booster phase
 // Per-phase booster meta for the day-plan strip.
 //   isWorkout: the booster itself counts as one of the 3 weekly workouts
 //              (so it fills a workout slot instead of needing its own day).
-//   proof: the actionable / evidence to capture for that booster.
-//   wikiUrl: deep link to this booster's section in the official Lark wiki.
+//   proofKey:  i18n key (boosterMeta.<phase>.proof) for the evidence to capture.
+//   wikiUrl:   deep link to this booster's section in the official Lark wiki.
 const WIKI_BASE = "https://zuscoffee.sg.larksuite.com/wiki/J4yCw1lWSiCBIKkjpqilg7FwgZb";
 export const BOOSTER_META = {
-  buddy: {
-    isWorkout: true,
-    proof: "photo/video during the walk/jog",
-    wikiUrl: `${WIKI_BASE}#CX0zd3agVowO5Rx8aFQlGLXbgHc`,
-  },
-  snapfuel: {
-    isWorkout: false,
-    proof: "time-lapse cooking video",
-    wikiUrl: `${WIKI_BASE}#QUngdKhz7oihbCxIRLtlazlUgWb`,
-  },
-  pace1: {
-    isWorkout: true,
-    proof: "screenshot: 2km distance + time",
-    wikiUrl: `${WIKI_BASE}#ZfdQdbrUQoRcRxxKiIBlx8KFgnc`,
-  },
-  hydration: {
-    isWorkout: false,
-    proof: "15–30s clip: sip + 1 health fact",
-    wikiUrl: `${WIKI_BASE}#LgCsdWFgroUG5exYu4Xl05vdggf`,
-  },
-  pace2: {
-    isWorkout: true,
-    proof: "screenshot: 2km distance + time",
-    wikiUrl: `${WIKI_BASE}#HEiSdJjuPotWZDxrWuxlkZAKgjg`,
-  },
-  zen: {
-    isWorkout: true,
-    proof: "15–30s timelapse of the session",
-    wikiUrl: `${WIKI_BASE}#XkzrdeMzsoyryOxiXcJlja67gBf`,
-  },
-  mind: {
-    isWorkout: false,
-    proof: "reflection or photo at the talk",
-    wikiUrl: `${WIKI_BASE}#I6FUdjwEOoVWY0xxTnllBhfIgIb`,
-  },
+  buddy: { isWorkout: true, wikiUrl: `${WIKI_BASE}#CX0zd3agVowO5Rx8aFQlGLXbgHc` },
+  snapfuel: { isWorkout: false, wikiUrl: `${WIKI_BASE}#QUngdKhz7oihbCxIRLtlazlUgWb` },
+  pace1: { isWorkout: true, wikiUrl: `${WIKI_BASE}#ZfdQdbrUQoRcRxxKiIBlx8KFgnc` },
+  hydration: { isWorkout: false, wikiUrl: `${WIKI_BASE}#LgCsdWFgroUG5exYu4Xl05vdggf` },
+  pace2: { isWorkout: true, wikiUrl: `${WIKI_BASE}#HEiSdJjuPotWZDxrWuxlkZAKgjg` },
+  zen: { isWorkout: true, wikiUrl: `${WIKI_BASE}#XkzrdeMzsoyryOxiXcJlja67gBf` },
+  mind: { isWorkout: false, wikiUrl: `${WIKI_BASE}#I6FUdjwEOoVWY0xxTnllBhfIgIb` },
 };
 
 // Build this week's checklist, split into the two submission bookends:
@@ -133,22 +88,22 @@ export const BOOSTER_META = {
 // so the 3 workouts need 3 separate forms. And even when the booster is a workout-type
 // activity (Buddy Steps, Pace), it does NOT count as one of the 3 workouts.
 //
-// Returns [{ group, heading, items: [{ kind, label, cue, pts, note, tags }] }];
-// kind drives each card's colour.
+// Returns [{ group, headingKey, form, items: [{ kind, labelKey, cueKey, pts, badgeKey,
+// noteKey, noteVars, tags }] }]; kind drives each card's colour. Text is resolved by the
+// caller via i18n using the *Key fields, so this stays language-neutral.
 export function buildDayPlan(booster) {
-  const m = BOOSTER_META[booster.phase] || {};
   const isFirstWeek = booster.wk === "W1";
 
   return [
     {
       group: "start",
-      heading: "① Open the week — Monday",
+      headingKey: "plan.start.heading",
       form: "FORM 1",
       items: [
         {
           kind: "report",
-          label: isFirstWeek ? "Initial weigh-in (baseline)" : "Weigh-in (leave rest blank)",
-          cue: "own form · pick this week · weight + scale photo (feet + number)",
+          labelKey: isFirstWeek ? "plan.start.weighInBaseline" : "plan.start.weighIn",
+          cueKey: "plan.start.weighInCue",
           pts: isFirstWeek ? "baseline" : "+0 / 10 / 40",
         },
       ],
@@ -156,38 +111,38 @@ export function buildDayPlan(booster) {
     // The report splits across THREE Lark forms — "Type Of Activity" is single-select,
     // so each workout needs its own form. Form 2 carries everything else (steps + workout 1
     // + booster + bonus); Forms 3 & 4 each hold a single workout with the rest left blank.
-    // (Form 1 is Monday's weigh-in above.) Each `form` group renders in its own labelled bezel.
     {
       group: "report",
-      heading: "② Submit report — by next Mon (leave weight blank)",
+      headingKey: "plan.report.heading",
       form: "FORM 2",
       items: [
         {
           kind: "steps",
-          label: "40k+ Walking step count",
-          cue: "this week's total steps · screenshot from any step app",
+          labelKey: "plan.report.steps",
+          cueKey: "plan.report.stepsCue",
           pts: "+100",
         },
         {
           kind: "workout",
-          label: "Workout 1",
-          cue: "separate day · face photo/video",
-          pts: "+30",
-        },
-        // Workout points stack 30 / 30 / 40 = the 100/wk cap (the 3rd workout completes it).
-        {
-          kind: "booster",
-          label: `Booster: ${booster.name}`,
-          cue: m.proof,
+          labelKey: "plan.report.workout1",
+          cueKey: "plan.report.workout1Cue",
           pts: "+30",
         },
         {
           kind: "booster",
-          badge: "BONUS",
-          label: "Post on ZUS Moments",
-          cue: "with the hashtags below · screenshot it as proof",
+          labelKey: "plan.report.booster",
+          labelVars: { name: booster.name },
+          cueKey: `boosterMeta.${booster.phase}.proof`,
+          pts: "+30",
+        },
+        {
+          kind: "booster",
+          badgeKey: "plan.report.bonusBadge",
+          labelKey: "plan.report.postMoments",
+          cueKey: "plan.report.postMomentsCue",
           pts: "+10",
-          note: booster.extra ? `tip: ${booster.extra.toLowerCase()}` : undefined,
+          // The caller resolves extras.<extraKey> → text and wraps it in plan.report.tip.
+          extraKey: booster.extraKey,
           tags: booster.tags,
         },
       ],
@@ -198,8 +153,8 @@ export function buildDayPlan(booster) {
       items: [
         {
           kind: "workout",
-          label: "Workout 2",
-          cue: "own form · separate day · face photo/video · leave the rest blank",
+          labelKey: "plan.form3.workout2",
+          cueKey: "plan.form3.workout2Cue",
           pts: "+30",
         },
       ],
@@ -210,8 +165,8 @@ export function buildDayPlan(booster) {
       items: [
         {
           kind: "workout",
-          label: "Workout 3",
-          cue: "own form · separate day · face photo/video · capped at 3+ workouts · leave the rest blank",
+          labelKey: "plan.form4.workout3",
+          cueKey: "plan.form4.workout3Cue",
           pts: "+40",
         },
       ],
@@ -219,172 +174,131 @@ export function buildDayPlan(booster) {
   ];
 }
 
-// Bi-weekly booster rotation. phase = colour-band grouping.
+// Bi-weekly booster rotation. phase = colour-band grouping + i18n meta key.
+// `nameKey`/`descKey` index into the `boosters.<key>` bundle; `extraKey` (when present)
+// indexes into `extras.<key>` for the ZUS-Moments tip. `tags` are brand hashtags (not
+// translated). `dates` stay free-text here — short, locale-neutral date ranges.
 export const BOOSTERS = [
   {
     wk: "W1",
     dates: "22–28 Jun",
     phase: "buddy",
     icon: "👣",
-    name: "Buddy Steps",
-    desc: "Walk/jog with a buddy (incl. family/pets). Photo or video during the activity.",
-    bonus: "Post on ZUS Moments: +10 pts",
-    extra: "Tag a colleague",
+    nameKey: "buddy",
+    descKey: "buddyW1",
+    extraKey: "tagColleague",
     tags: "#ZUSBuddySteps #ChampionsFuelChampions",
-    pts: "30 / 40",
   },
   {
     wk: "W2",
     dates: "29 Jun–5 Jul",
     phase: "buddy",
     icon: "👣",
-    name: "Buddy Steps",
-    desc: "Walk/jog with a buddy (incl. family/pets). Photo or video during the activity. Max 2 submissions across W1+W2.",
-    bonus: "Post on ZUS Moments: +10 pts",
-    extra: "Tag a colleague",
+    nameKey: "buddy",
+    descKey: "buddyW2",
+    extraKey: "tagColleague",
     tags: "#ZUSBuddySteps #ChampionsFuelChampions",
-    pts: "30 / 40",
   },
   {
     wk: "W3",
     dates: "6–12 Jul",
     phase: "snapfuel",
     icon: "🥗",
-    name: "ZUS SnapFuel",
-    desc: "Cook a healthy homemade meal/smoothie. Upload a short time-lapse video.",
-    bonus: "Post on ZUS Moments: +10 pts",
-    extra: "Add a catchy title",
+    nameKey: "snapfuel",
+    descKey: "snapfuelW3",
+    extraKey: "catchyTitle",
     tags: "#ZUSSnapFuel #ChampionsFuelChampions",
-    pts: "30 / 40",
   },
   {
     wk: "W4",
     dates: "13–19 Jul",
     phase: "snapfuel",
     icon: "🥗",
-    name: "ZUS SnapFuel",
-    desc: "Cook a healthy homemade meal/smoothie. Upload a short time-lapse video. Only meals cooked during the challenge weeks count.",
-    bonus: "Post on ZUS Moments: +10 pts",
-    extra: "Add a catchy title",
+    nameKey: "snapfuel",
+    descKey: "snapfuelW4",
+    extraKey: "catchyTitle",
     tags: "#ZUSSnapFuel #ChampionsFuelChampions",
-    pts: "30 / 40",
   },
   {
     wk: "W5",
     dates: "20–26 Jul",
     phase: "pace1",
     icon: "🏃",
-    name: "ZUS Pace Challenge",
-    desc: "Complete 2km within 20 min. Show distance + time.",
-    bonus: "Post on ZUS Moments: +10 pts",
-    extra: "Show ZUS merch/tumbler",
+    nameKey: "pace1",
+    descKey: "pace1Desc",
+    extraKey: "showMerch",
     tags: "#ZUSPaceChallenge #ChampionsFuelChampions",
-    pts: "30 / 40",
   },
   {
     wk: "W6",
     dates: "27 Jul–2 Aug",
     phase: "pace1",
     icon: "🏃",
-    name: "ZUS Pace Challenge",
-    desc: "Complete 2km within 20 min. Show distance + time.",
-    bonus: "Post on ZUS Moments: +10 pts",
-    extra: "Show ZUS merch/tumbler",
+    nameKey: "pace1",
+    descKey: "pace1Desc",
+    extraKey: "showMerch",
     tags: "#ZUSPaceChallenge #ChampionsFuelChampions",
-    pts: "30 / 40",
   },
   {
     wk: "W7",
     dates: "3–9 Aug",
     phase: "hydration",
     icon: "💧",
-    name: "Hydration Hustle",
-    desc: "Drink ≥2L water daily. Film a 15–30s clip: take a sip + share 1 health fact.",
-    bonus: "Post on ZUS Moments: +10 pts",
-    extra: "Show ZUS merch/tumbler",
+    nameKey: "hydration",
+    descKey: "hydrationDesc",
+    extraKey: "showMerch",
     tags: "#ZUSHydrationHustle #ChampionsFuelChampions",
-    pts: "30 / 40",
   },
   {
     wk: "W8",
     dates: "10–16 Aug",
     phase: "hydration",
     icon: "💧",
-    name: "Hydration Hustle",
-    desc: "Drink ≥2L water daily. Film a 15–30s clip: take a sip + share 1 health fact.",
-    bonus: "Post on ZUS Moments: +10 pts",
-    extra: "Show ZUS merch/tumbler",
+    nameKey: "hydration",
+    descKey: "hydrationDesc",
+    extraKey: "showMerch",
     tags: "#ZUSHydrationHustle #ChampionsFuelChampions",
-    pts: "30 / 40",
   },
   {
     wk: "W9",
     dates: "17–23 Aug",
     phase: "pace2",
     icon: "⚡",
-    name: "Pace Challenge: Level Up",
-    desc: "Complete 2km within 15 min. Show distance + time.",
-    bonus: "Post on ZUS Moments: +10 pts",
-    extra: "Show ZUS merch/tumbler",
+    nameKey: "pace2",
+    descKey: "pace2Desc",
+    extraKey: "showMerch",
     tags: "#ZUSPaceUp #ChampionsFuelChampions",
-    pts: "30 / 40",
   },
   {
     wk: "W10",
     dates: "24–30 Aug",
     phase: "pace2",
     icon: "⚡",
-    name: "Pace Challenge: Level Up",
-    desc: "Complete 2km within 15 min. Show distance + time.",
-    bonus: "Post on ZUS Moments: +10 pts",
-    extra: "Show ZUS merch/tumbler",
+    nameKey: "pace2",
+    descKey: "pace2Desc",
+    extraKey: "showMerch",
     tags: "#ZUSPaceUp #ChampionsFuelChampions",
-    pts: "30 / 40",
   },
-  {
-    wk: "W11",
-    dates: "31 Aug–6 Sep",
-    phase: "zen",
-    icon: "🧘",
-    name: "ZUS Zen Time",
-    desc: "Join a yoga/Zumba/meditation/wellness class (online or in person). 15–30s time-lapse.",
-    bonus: "Post on ZUS Moments: +10 pts",
-    tags: "#ZUSZenTime #ChampionsFuelChampions",
-    pts: "30 / 40",
-  },
-  {
-    wk: "W12",
-    dates: "7–13 Sep",
-    phase: "zen",
-    icon: "🧘",
-    name: "ZUS Zen Time",
-    desc: "Join a yoga/Zumba/meditation/wellness class (online or in person). 15–30s time-lapse. No duplicate submissions of the same session.",
-    bonus: "Post on ZUS Moments: +10 pts",
-    tags: "#ZUSZenTime #ChampionsFuelChampions",
-    pts: "30 / 40",
-  },
+  { wk: "W11", dates: "31 Aug–6 Sep", phase: "zen", icon: "🧘", nameKey: "zen", descKey: "zenW11", tags: "#ZUSZenTime #ChampionsFuelChampions" },
+  { wk: "W12", dates: "7–13 Sep", phase: "zen", icon: "🧘", nameKey: "zen", descKey: "zenW12", tags: "#ZUSZenTime #ChampionsFuelChampions" },
   {
     wk: "W13",
     dates: "14–20 Sep",
     phase: "mind",
     icon: "🧠",
-    name: "ZUS Mind Break Mission",
-    desc: "Attend a ZUS Mental Health Talk / Wellness session. Log a reflection or photo.",
-    bonus: "Post on ZUS Moments: +10 pts",
-    extra: "Add a fun caption",
+    nameKey: "mind",
+    descKey: "mindW13",
+    extraKey: "funCaption",
     tags: "#ZUSMindBreakMission #ChampionsFuelChampions",
-    pts: "30 / 40",
   },
   {
     wk: "W14",
     dates: "21–27 Sep",
     phase: "mind",
     icon: "🧠",
-    name: "ZUS Mind Break Mission",
-    desc: "Attend a ZUS Mental Health Talk / Wellness session. Log a reflection or photo. Submission required after attending.",
-    bonus: "Post on ZUS Moments: +10 pts",
-    extra: "Add a fun caption",
+    nameKey: "mind",
+    descKey: "mindW14",
+    extraKey: "funCaption",
     tags: "#ZUSMindBreakMission #ChampionsFuelChampions",
-    pts: "30 / 40",
   },
 ];

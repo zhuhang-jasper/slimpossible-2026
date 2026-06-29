@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
 
 import { Download, Share, SquarePlus, X } from "lucide-react";
 
@@ -25,13 +26,15 @@ function dismissedRecently() {
 }
 
 // The iOS "Share → Add to Home Screen" instruction line, shared by both surfaces.
+// Text fragments come from i18n; the two inline icons are composed around them.
 function IosHintText() {
+  const { t } = useTranslation();
   return (
     <>
-      It&rsquo;s just this page — nothing to download. Tap{" "}
-      <Share size={14} strokeWidth={2.5} className="install-inline-icon" aria-label="the Share button" /> then{" "}
+      {t("install.iosHintPre")} <Share size={14} strokeWidth={2.5} className="install-inline-icon" aria-label={t("install.shareLabel")} />{" "}
+      {t("install.iosHintMid")}{" "}
       <b>
-        Add to Home Screen <SquarePlus size={14} strokeWidth={2.5} className="install-inline-icon" aria-hidden="true" />
+        {t("install.iosHintAdd")} <SquarePlus size={14} strokeWidth={2.5} className="install-inline-icon" aria-hidden="true" />
       </b>
       .
     </>
@@ -43,6 +46,7 @@ function IosHintText() {
  * Shown only in a browser tab (not when installed) and respects a 14-day dismissal.
  */
 function InstallPrompt() {
+  const { t } = useTranslation();
   const { installed, canInstall, iosHint, install } = useInstallPrompt("banner");
   const [visible, setVisible] = useState(false);
 
@@ -82,28 +86,28 @@ function InstallPrompt() {
   }
 
   return (
-    <section className="install-prompt" aria-label="Install this app">
+    <section className="install-prompt" aria-label={t("install.bannerLabel")}>
       <div className="install-icon" aria-hidden="true">
         <Download size={22} strokeWidth={2.25} />
       </div>
       <div className="install-body">
-        <p className="install-title">Add to your home screen</p>
+        <p className="install-title">{t("install.title")}</p>
         {iosHint ? (
           <p className="install-text">
             <IosHintText />
           </p>
         ) : (
           <p className="install-text">
-            Add <b>SlimPossible 2026</b> to your home screen for one-tap access. It&rsquo;s just this web page — nothing to download.
+            <Trans i18nKey="install.text" components={{ b: <b /> }} />
           </p>
         )}
       </div>
       {canInstall && (
         <button type="button" className="install-cta" onClick={onInstall}>
-          Install
+          {t("install.install")}
         </button>
       )}
-      <button type="button" className="install-close" onClick={dismiss} aria-label="Dismiss install prompt">
+      <button type="button" className="install-close" onClick={dismiss} aria-label={t("install.dismiss")}>
         <X size={18} strokeWidth={2.5} aria-hidden="true" />
       </button>
     </section>
@@ -119,6 +123,7 @@ function InstallPrompt() {
  * browser that never fired beforeinstallprompt and isn't iOS Safari).
  */
 function InstallCard() {
+  const { t } = useTranslation();
   const { installed, canInstall, iosHint, install } = useInstallPrompt("drawer_card");
 
   // Announce the card once, when it first becomes available.
@@ -139,20 +144,12 @@ function InstallCard() {
 
   return (
     <section className="install-card">
-      <h2>📲 Install this app</h2>
-      <p className="install-card-text">
-        {iosHint ? (
-          <IosHintText />
-        ) : (
-          <>
-            Add <b>SlimPossible 2026</b> to your home screen for one-tap, full-screen access. It&rsquo;s just this web page — nothing to download.
-          </>
-        )}
-      </p>
+      <h2>{t("install.cardTitle")}</h2>
+      <p className="install-card-text">{iosHint ? <IosHintText /> : <Trans i18nKey="install.cardText" components={{ b: <b /> }} />}</p>
       {canInstall && (
         <button type="button" className="install-card-cta" onClick={install}>
           <Download size={16} strokeWidth={2.25} aria-hidden="true" />
-          Install
+          {t("install.install")}
         </button>
       )}
     </section>
