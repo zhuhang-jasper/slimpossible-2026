@@ -102,6 +102,7 @@ header.hero {
   background: none;
   color: #fff;
   cursor: pointer;
+  margin-left: 4px;
   transition:
     opacity 0.15s ease,
     transform 0.15s ease;
