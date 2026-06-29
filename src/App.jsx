@@ -487,7 +487,10 @@ export default function App() {
                                       <li key={d.label} className={`wp-act ${d.kind}`}>
                                         {/* row 1: title on the left, points on the right */}
                                         <div className="wp-row wp-row-head">
-                                          <span className="wp-clabel">{d.label}</span>
+                                          <span className="wp-clabel">
+                                            {d.badge && <span className="wp-badge">{d.badge}</span>}
+                                            {d.label}
+                                          </span>
                                           {d.pts && <span className="wp-pts">{d.pts}</span>}
                                         </div>
                                         {/* row 2: description on the left, info icon on the right */}

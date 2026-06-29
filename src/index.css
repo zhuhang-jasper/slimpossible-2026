@@ -297,6 +297,19 @@ header.hero .gold {
   min-width: 0;
   font-weight: 700;
 }
+/* gold "BONUS" badge prefixing the ZUS Moments label */
+.wp-badge {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--zus-gold);
+  color: #fff;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  vertical-align: 1px;
+}
 .wp-pts {
   flex: 0 0 auto;
   font-weight: 800;

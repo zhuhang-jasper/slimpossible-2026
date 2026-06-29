@@ -183,7 +183,8 @@ export function buildDayPlan(booster) {
         },
         {
           kind: "booster",
-          label: "BONUS: Post on ZUS Moments",
+          badge: "BONUS",
+          label: "Post on ZUS Moments",
           cue: "with the hashtags below · screenshot it as proof",
           pts: "+10",
           note: booster.extra ? `tip: ${booster.extra.toLowerCase()}` : undefined,
