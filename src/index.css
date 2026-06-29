@@ -234,15 +234,15 @@ header.hero .gold {
    gold current-week row and reads the whole bezel as one submission. */
 .wp-form {
   position: relative;
-  padding: 6px 6px 6px 28px;
+  padding: 6px 6px 6px 22px;
   background: #fff;
   border: 1px solid var(--line);
-  border-left: 4px solid var(--zus-blue);
+  border-left: 3px solid var(--zus-blue);
   border-radius: 4px 8px 8px 4px;
 }
 .wp-formlabel {
   position: absolute;
-  left: 4px;
+  left: 1px;
   top: 0;
   bottom: 0;
   width: 20px;
@@ -691,7 +691,9 @@ td.wk {
   cursor: pointer;
   text-align: left;
   overflow: hidden;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
 }
 .copytags:hover {
   background: #fbd3e3;
@@ -707,8 +709,11 @@ td.wk {
   word-break: break-word;
 }
 .copytags-cta {
-  flex: 0 0 auto;
-  min-width: 20%;
+  /* fixed width sized past the wider "Copied!" state (~74px content) so the
+     label/divider don't shift when the button toggles "Copy" → "Copied!".
+     min-width pins it so flex min-content sizing can't grow the box. */
+  flex: 0 0 80px;
+  min-width: 80px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
