@@ -2,6 +2,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 
 import { BookOpen, Check, ClipboardList, Copy, ExternalLink, Info } from "lucide-react";
 
+import InstallPrompt from "./components/InstallPrompt.jsx";
 import { track } from "./utils/analytics.js";
 import { BIWEEKLY_MAX, BONUS_TASKS, BOOSTER_META, BOOSTERS, buildDayPlan, CHALLENGE_START, WEEK_MAX, WEEKLY_TASKS } from "./data.js";
 
@@ -550,6 +551,8 @@ export default function App() {
       </div>
 
       <DetailsDrawer open={detailsOpen} target={detailsTarget} onClose={() => setDetailsOpen(false)} />
+
+      <InstallPrompt />
 
       <footer className="footer">
         © 2026 Jasper Loo Zhu Hang · All rights reserved · <span className="ver">v{import.meta.env.VITE_APP_VERSION}</span>

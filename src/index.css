@@ -1096,3 +1096,100 @@ td.total {
     font-size: 9pt;
   }
 }
+
+/* ---------- PWA install prompt (fixed bottom banner) ---------- */
+/* Slides up above the safe-area inset; dismissible. Shown on Chrome/Edge/Android
+   (native Install button) and iOS Safari (manual Add-to-Home-Screen hint). */
+.install-prompt {
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+  transform: translateX(-50%);
+  z-index: 30; /* above the hero (10) and table header */
+  width: min(560px, calc(100vw - 24px));
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 8px 28px rgba(29, 43, 138, 0.22);
+  animation: install-rise 0.28s ease-out;
+}
+@keyframes install-rise {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 16px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .install-prompt {
+    animation: none;
+  }
+}
+.install-icon {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--zus-blue), #2c3db0);
+}
+.install-body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.install-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.install-text {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: var(--muted);
+}
+.install-inline-icon {
+  vertical-align: -2px;
+  color: var(--zus-blue);
+}
+.install-cta {
+  flex: 0 0 auto;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--zus-blue);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.install-cta:hover {
+  background: #16207a;
+}
+.install-close {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.install-close:hover {
+  background: var(--zus-blue-light);
+  color: var(--ink);
+}
