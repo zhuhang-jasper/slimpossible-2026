@@ -143,6 +143,7 @@ export function buildDayPlan(booster) {
     {
       group: "start",
       heading: "① Open the week — Monday",
+      form: "FORM 1",
       items: [
         {
           kind: "report",
@@ -152,9 +153,14 @@ export function buildDayPlan(booster) {
         },
       ],
     },
+    // The report splits across THREE Lark forms — "Type Of Activity" is single-select,
+    // so each workout needs its own form. Form 2 carries everything else (steps + workout 1
+    // + booster + bonus); Forms 3 & 4 each hold a single workout with the rest left blank.
+    // (Form 1 is Monday's weigh-in above.) Each `form` group renders in its own labelled bezel.
     {
       group: "report",
       heading: "② Submit report — by next Mon (leave weight blank)",
+      form: "FORM 2",
       items: [
         {
           kind: "steps",
@@ -164,10 +170,11 @@ export function buildDayPlan(booster) {
         },
         {
           kind: "workout",
-          label: "3 Workout days",
-          cue: "separate day · face photo/video · capped at 3+ workouts",
-          pts: "+100",
+          label: "Workout 1",
+          cue: "separate day · face photo/video",
+          pts: "+30",
         },
+        // Workout points stack 30 / 30 / 40 = the 100/wk cap (the 3rd workout completes it).
         {
           kind: "booster",
           label: `Booster: ${booster.name}`,
@@ -181,6 +188,30 @@ export function buildDayPlan(booster) {
           pts: "+10",
           note: booster.extra ? `tip: ${booster.extra.toLowerCase()}` : undefined,
           tags: booster.tags,
+        },
+      ],
+    },
+    {
+      group: "form3",
+      form: "FORM 3",
+      items: [
+        {
+          kind: "workout",
+          label: "Workout 2",
+          cue: "own form · separate day · face photo/video · leave the rest blank",
+          pts: "+30",
+        },
+      ],
+    },
+    {
+      group: "form4",
+      form: "FORM 4",
+      items: [
+        {
+          kind: "workout",
+          label: "Workout 3",
+          cue: "own form · separate day · face photo/video · capped at 3+ workouts · leave the rest blank",
+          pts: "+40",
         },
       ],
     },

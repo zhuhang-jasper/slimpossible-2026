@@ -344,7 +344,7 @@ export default function App() {
         </button>
         <h1>🏋️ SlimPossible Challenge 2026</h1>
         <div className="sub">
-          14-week weekly timetable · Challenge runs <span className="gold">22 Jun – 27 Sep 2026</span> · Cash prizes up to RM5,000
+          14-week · <span className="gold">22 Jun – 27 Sep 2026</span>
         </div>
         <div className="hero-links">
           <a
@@ -463,41 +463,8 @@ export default function App() {
                           <div className="wp-strip">
                             {buildDayPlan(b).map((g) => (
                               <div key={g.group} className={`wp-group wp-group-${g.group}`}>
-                                <p className="wp-ghead">{g.heading}</p>
-                                <ul className="wp-actions">
-                                  {g.items.map((d) => (
-                                    <li key={d.label} className={`wp-act ${d.kind}`}>
-                                      {/* row 1: title on the left, points on the right */}
-                                      <div className="wp-row wp-row-head">
-                                        <span className="wp-clabel">{d.label}</span>
-                                        {d.pts && <span className="wp-pts">{d.pts}</span>}
-                                      </div>
-                                      {/* row 2: description on the left, info icon on the right */}
-                                      <div className="wp-row wp-row-body">
-                                        <span className="wp-cdesc">
-                                          {d.cue && <span className="wp-ccue">{d.cue}</span>}
-                                          {d.note && <span className="wp-cnote">{d.note}</span>}
-                                        </span>
-                                        {d.pts && (
-                                          <button
-                                            type="button"
-                                            className="wp-pts-info"
-                                            aria-label="How points are scored — open challenge details"
-                                            onClick={(event) => {
-                                              event.stopPropagation();
-                                              // booster + bonus cards point at the bonus section; everything else lands at the top
-                                              openDetails("card_points", d.kind === "booster" ? "bonus" : "top");
-                                            }}
-                                            onKeyDown={(event) => event.stopPropagation()}
-                                          >
-                                            <Info size={18} strokeWidth={2.5} aria-hidden="true" />
-                                          </button>
-                                        )}
-                                      </div>
-                                      {d.tags && <CopyTags text={d.tags} week={b.wk} />}
-                                    </li>
-                                  ))}
-                                </ul>
+                                {g.heading && <p className="wp-ghead">{g.heading}</p>}
+                                {/* deadline footnote sits under the "② Submit report" heading */}
                                 {g.group === "report" && (
                                   <p className="wp-deadline">
                                     🗓️ Due by the <b>following Monday</b>
@@ -510,6 +477,46 @@ export default function App() {
                                     , or submit earlier on the same day of each activity.
                                   </p>
                                 )}
+                                {/* Report-side actions are bracketed by which Lark form they ride on:
+                                    a thick left bezel with a vertical "FORM N" label. Each workout needs
+                                    its own form (single-select activity), so Forms 2 & 3 hold one workout. */}
+                                <div className={g.form ? "wp-form" : undefined}>
+                                  {g.form && <span className="wp-formlabel">{g.form}</span>}
+                                  <ul className="wp-actions">
+                                    {g.items.map((d) => (
+                                      <li key={d.label} className={`wp-act ${d.kind}`}>
+                                        {/* row 1: title on the left, points on the right */}
+                                        <div className="wp-row wp-row-head">
+                                          <span className="wp-clabel">{d.label}</span>
+                                          {d.pts && <span className="wp-pts">{d.pts}</span>}
+                                        </div>
+                                        {/* row 2: description on the left, info icon on the right */}
+                                        <div className="wp-row wp-row-body">
+                                          <span className="wp-cdesc">
+                                            {d.cue && <span className="wp-ccue">{d.cue}</span>}
+                                            {d.note && <span className="wp-cnote">{d.note}</span>}
+                                          </span>
+                                          {d.pts && (
+                                            <button
+                                              type="button"
+                                              className="wp-pts-info"
+                                              aria-label="How points are scored — open challenge details"
+                                              onClick={(event) => {
+                                                event.stopPropagation();
+                                                // booster + bonus cards point at the bonus section; everything else lands at the top
+                                                openDetails("card_points", d.kind === "booster" ? "bonus" : "top");
+                                              }}
+                                              onKeyDown={(event) => event.stopPropagation()}
+                                            >
+                                              <Info size={18} strokeWidth={2.5} aria-hidden="true" />
+                                            </button>
+                                          )}
+                                        </div>
+                                        {d.tags && <CopyTags text={d.tags} week={b.wk} />}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
                               </div>
                             ))}
                           </div>
