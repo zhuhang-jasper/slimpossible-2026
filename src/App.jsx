@@ -104,7 +104,7 @@ function DetailsDrawer({ open, onClose }) {
             <h2>📌 How to read this</h2>
             <ul>
               <li>
-                <b>The 3 every-week tasks above happen every single week</b> — weigh-in (Mon), step log, and 3 workouts.
+                <b>The 3 every-week tasks above happen every single week</b> — weigh-in (Monday), step log, and 3 workouts.
               </li>
               <li>
                 <b>The booster changes every 2 weeks.</b> Just check your week's row for what's special.
@@ -119,7 +119,25 @@ function DetailsDrawer({ open, onClose }) {
                 <b>{fmt(WEEK_MAX * BOOSTERS.length)}</b> — your leaderboard benchmark.
               </li>
               <li>
-                <b>All submissions go to the Lark Base Tracker</b> — that's mandatory for points to count.
+                <b>Each week has two submission bookends</b> (expand a week to see them):{" "}
+                <b>① Open</b> — on Monday, a weigh-in form: pick that week, enter your Monday-morning weight, leave the rest blank.{" "}
+                <b>② Report</b> — the week's activities (steps + workouts + booster + bonus), with the weight left blank.
+              </li>
+              <li>
+                <b>The report is due by the FOLLOWING Monday</b> — but you can submit earlier (e.g. each workout on the day it
+                happens). <b>Week 1 is just the baseline weigh-in</b> to open the challenge.
+              </li>
+              <li>
+                <b>Each Lark Base form takes only ONE workout</b> ("Type Of Activity" is single-select), so 3 workouts means 3 forms.
+                Steps, booster and the ZUS Moments post can ride on any of those forms, or go on their own — your choice.
+              </li>
+              <li>
+                <b>Every field reveals its own proof upload</b> once you fill it — weight needs a scale photo, steps a screenshot,
+                each workout a face photo/video, the booster its proof, and the ZUS Moments post a screenshot.
+              </li>
+              <li>
+                Even when the booster is a workout-type activity (Buddy Steps, Pace), it does <b>not</b> count as one of your 3
+                workouts — the booster and each workout are separate submissions.
               </li>
               <li>
                 All activities must be done <b>outside working hours</b>. Only weight <i>losses</i> earn points (maintain/gain = 0).
@@ -165,6 +183,7 @@ function DetailsDrawer({ open, onClose }) {
 
 // Copy-to-clipboard button for a week's hashtag line. Lives in a toggle-able row,
 // so it stops click/keyboard events from bubbling up and collapsing the week.
+// Renders as a full-width tappable button showing the hashtags + a "Copy" label.
 function CopyTags({ text, week }) {
   const [copied, setCopied] = useState(false);
   const timerRef = useRef(null);
@@ -188,13 +207,21 @@ function CopyTags({ text, week }) {
       onClick={copy}
       onKeyDown={(event) => event.stopPropagation()}
       aria-label={copied ? "Hashtags copied" : "Copy hashtags"}
-      title={copied ? "Copied!" : "Copy hashtags"}
     >
-      {copied ? (
-        <Check size={13} strokeWidth={2.5} aria-hidden="true" />
-      ) : (
-        <Copy size={13} strokeWidth={2.25} aria-hidden="true" />
-      )}
+      <span className="copytags-text">{text}</span>
+      <span className="copytags-cta">
+        {copied ? (
+          <>
+            <Check size={13} strokeWidth={2.5} aria-hidden="true" />
+            Copied!
+          </>
+        ) : (
+          <>
+            <Copy size={13} strokeWidth={2.25} aria-hidden="true" />
+            Copy
+          </>
+        )}
+      </span>
     </button>
   );
 }
@@ -382,23 +409,6 @@ export default function App() {
                         </span>
                         <br />
                         <span className="post">{b.desc}</span>
-                        <br />
-                        {b.bonus && (
-                          <>
-                            <span className="bonusline">🌟 Bonus: {b.bonus}</span>
-                            <br />
-                          </>
-                        )}
-                        {b.extra && (
-                          <>
-                            <span className="extraline">✨ {b.extra}</span>
-                            <br />
-                          </>
-                        )}
-                        <span className="tag">
-                          {b.tags}
-                          <CopyTags text={b.tags} week={b.wk} />
-                        </span>
                         {/* wiki link only shows when the week is expanded */}
                         {open && BOOSTER_META[b.phase]?.wikiUrl && (
                           <>
@@ -430,15 +440,34 @@ export default function App() {
                       <tr className={`planrow${b.isCurrent ? " current" : ""}`}>
                         <td colSpan={3} aria-label={`Week ${b.wk} day plan`}>
                           <div className="wp-strip">
-                            <ul className="wp-actions">
-                              {buildDayPlan(b).map((d) => (
-                                <li key={d.label} className={`wp-act ${d.kind}`}>
-                                  <span className="wp-clabel">{d.label}</span>
-                                  {d.cue && <span className="wp-ccue">{d.cue}</span>}
-                                  {d.pts && <span className="wp-pts">{d.pts}</span>}
-                                </li>
-                              ))}
-                            </ul>
+                            {buildDayPlan(b).map((g) => (
+                              <div key={g.group} className={`wp-group wp-group-${g.group}`}>
+                                <p className="wp-ghead">{g.heading}</p>
+                                <ul className="wp-actions">
+                                  {g.items.map((d) => (
+                                    <li key={d.label} className={`wp-act ${d.kind}`}>
+                                      <span className="wp-clabel">{d.label}</span>
+                                      {d.cue && <span className="wp-ccue">{d.cue}</span>}
+                                      {d.note && <span className="wp-cnote">{d.note}</span>}
+                                      {d.pts && <span className="wp-pts">{d.pts}</span>}
+                                      {d.tags && <CopyTags text={d.tags} week={b.wk} />}
+                                    </li>
+                                  ))}
+                                </ul>
+                                {g.group === "report" && (
+                                  <p className="wp-deadline">
+                                    🗓️ Due by the <b>following Monday</b>
+                                    {rows[i + 1] ? (
+                                      <>
+                                        {" "}
+                                        (before you do your <b>{rows[i + 1].wk}</b> weigh-in)
+                                      </>
+                                    ) : null}
+                                    , or submit earlier on the same day of each activity.
+                                  </p>
+                                )}
+                              </div>
+                            ))}
                           </div>
                         </td>
                       </tr>

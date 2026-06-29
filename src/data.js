@@ -120,59 +120,84 @@ export const BOOSTER_META = {
   },
 };
 
-// Build this week's action checklist (NOT a daily schedule — just the things to do).
-// Always starts with Monday reporting, then weigh-in, workouts, and the booster.
-// If the booster is itself a workout, it counts as one workout (so 2 others + booster);
-// otherwise it's a separate action on top of 3 workouts.
-// Returns [{ kind, label, cue }]; kind drives styling (report / workout / booster / combo).
+// Build this week's checklist, split into the two submission bookends:
+//
+//  • START — on Monday, open the week with a weigh-in form: pick THIS week, enter your
+//    Monday-morning weight, leave the rest blank. (W1 is just the baseline weight.)
+//
+//  • REPORT — fill the week's activities (steps + workouts + booster + bonus) on a form
+//    where you pick THIS week and leave the weight blank. Due by the following Monday,
+//    but you can submit earlier (each workout on its day, etc.) — the user's choice.
+//
+// Note: each Lark Base form takes only ONE workout ("Type Of Activity" is single-select),
+// so the 3 workouts need 3 separate forms. And even when the booster is a workout-type
+// activity (Buddy Steps, Pace), it does NOT count as one of the 3 workouts.
+//
+// Returns [{ group, heading, items: [{ kind, label, cue, pts, note, tags }] }];
+// kind drives each card's colour.
 export function buildDayPlan(booster) {
   const m = BOOSTER_META[booster.phase] || {};
-  // W1 is the first week — there's nothing from a prior week to report, so it's a weigh-in only.
   const isFirstWeek = booster.wk === "W1";
-  const actions = [
-    isFirstWeek
-      ? {
+
+  return [
+    {
+      group: "start",
+      heading: "① Open the week — Monday weigh-in",
+      items: [
+        {
           kind: "report",
-          label: "Mon: Weigh-in",
-          cue: "scale (feet + display visible)",
-          pts: "+0/10/40",
-        }
-      : {
-          kind: "report",
-          label: "Mon: Weigh-in + report",
-          cue: "scale (feet + display visible) · log steps, workouts, booster",
-          pts: "+0/10/40",
+          label: isFirstWeek ? "Initial weigh-in (baseline)" : "Weigh-in",
+          cue: "own form · pick this week · weight + scale photo (feet + number) · rest blank",
+          pts: isFirstWeek ? "baseline" : "0 / 10 / 40",
         },
+      ],
+    },
+    {
+      group: "report",
+      heading: "② Report the week — by next Monday (leave weight blank)",
+      items: [
+        {
+          kind: "steps",
+          label: "Walking step count",
+          cue: "this week's total steps · screenshot from any step app · 20k → 20 … 40k+ → 100",
+          pts: "20–100",
+        },
+        {
+          kind: "workout",
+          label: "Workout 1",
+          cue: "separate day · face photo/video",
+          pts: "+30",
+        },
+        {
+          kind: "workout",
+          label: "Workout 2",
+          cue: "separate day · face photo/video",
+          pts: "+30",
+        },
+        {
+          kind: "workout",
+          label: "Workout 3",
+          cue: "separate day · face photo/video",
+          pts: "+40",
+          note: "3+ workouts caps at 100 total",
+        },
+        {
+          kind: "booster",
+          label: `Booster: ${booster.name}`,
+          cue: m.proof,
+          pts: "30",
+        },
+        {
+          kind: "booster",
+          label: "BONUS: Post on ZUS Moments",
+          cue: "with the hashtags below · screenshot it as proof",
+          pts: "+10",
+          note: booster.extra ? `tip: ${booster.extra.toLowerCase()}` : undefined,
+          tags: booster.tags,
+        },
+      ],
+    },
   ];
-  actions.push({
-    kind: "steps",
-    label: "Keep walking daily",
-    cue: "~6k+/day → 40k+/week",
-    pts: "+100",
-  });
-  if (m.isWorkout) {
-    actions.push({
-      kind: "workout",
-      label: "2 workouts",
-      cue: "separate days · face photo/video · booster counts as the 3rd",
-      pts: "+100*",
-    });
-    actions.push({
-      kind: "combo",
-      label: `${booster.name}*`,
-      cue: `counts as a workout · ${m.proof}`,
-      pts: "+30/40",
-    });
-  } else {
-    actions.push({
-      kind: "workout",
-      label: "3 workouts",
-      cue: "separate days · face photo/video",
-      pts: "+100",
-    });
-    actions.push({ kind: "booster", label: booster.name, cue: m.proof, pts: "+30/40" });
-  }
-  return actions;
 }
 
 // Bi-weekly booster rotation. phase = colour-band grouping.
@@ -195,7 +220,7 @@ export const BOOSTERS = [
     phase: "buddy",
     icon: "👣",
     name: "Buddy Steps",
-    desc: "Same as W1. Max 2 submissions across W1+W2.",
+    desc: "Walk/jog with a buddy (incl. family/pets). Photo or video during the activity. Max 2 submissions across W1+W2.",
     bonus: "Post on ZUS Moments: +10 pts",
     extra: "Tag a colleague",
     tags: "#ZUSBuddySteps #ChampionsFuelChampions",
@@ -219,7 +244,7 @@ export const BOOSTERS = [
     phase: "snapfuel",
     icon: "🥗",
     name: "ZUS SnapFuel",
-    desc: "Same as W3. Only meals cooked during the challenge weeks count.",
+    desc: "Cook a healthy homemade meal/smoothie. Upload a short time-lapse video. Only meals cooked during the challenge weeks count.",
     bonus: "Post on ZUS Moments: +10 pts",
     extra: "Add a catchy title",
     tags: "#ZUSSnapFuel #ChampionsFuelChampions",
@@ -243,7 +268,7 @@ export const BOOSTERS = [
     phase: "pace1",
     icon: "🏃",
     name: "ZUS Pace Challenge",
-    desc: "Same goal: 2km in 20 min.",
+    desc: "Complete 2km within 20 min. Show distance + time.",
     bonus: "Post on ZUS Moments: +10 pts",
     extra: "Show ZUS merch/tumbler",
     tags: "#ZUSPaceChallenge #ChampionsFuelChampions",
@@ -267,7 +292,7 @@ export const BOOSTERS = [
     phase: "hydration",
     icon: "💧",
     name: "Hydration Hustle",
-    desc: "Same as W7.",
+    desc: "Drink ≥2L water daily. Film a 15–30s clip: take a sip + share 1 health fact.",
     bonus: "Post on ZUS Moments: +10 pts",
     extra: "Show ZUS merch/tumbler",
     tags: "#ZUSHydrationHustle #ChampionsFuelChampions",
@@ -291,7 +316,7 @@ export const BOOSTERS = [
     phase: "pace2",
     icon: "⚡",
     name: "Pace Challenge: Level Up",
-    desc: "Same goal: 2km in 15 min.",
+    desc: "Complete 2km within 15 min. Show distance + time.",
     bonus: "Post on ZUS Moments: +10 pts",
     extra: "Show ZUS merch/tumbler",
     tags: "#ZUSPaceUp #ChampionsFuelChampions",
@@ -314,7 +339,7 @@ export const BOOSTERS = [
     phase: "zen",
     icon: "🧘",
     name: "ZUS Zen Time",
-    desc: "Same as W11. No duplicate submissions of the same session.",
+    desc: "Join a yoga/Zumba/meditation/wellness class (online or in person). 15–30s time-lapse. No duplicate submissions of the same session.",
     bonus: "Post on ZUS Moments: +10 pts",
     tags: "#ZUSZenTime #ChampionsFuelChampions",
     pts: "30 / 40",
@@ -337,7 +362,7 @@ export const BOOSTERS = [
     phase: "mind",
     icon: "🧠",
     name: "ZUS Mind Break Mission",
-    desc: "Same as W13. Submission required after attending.",
+    desc: "Attend a ZUS Mental Health Talk / Wellness session. Log a reflection or photo. Submission required after attending.",
     bonus: "Post on ZUS Moments: +10 pts",
     extra: "Add a fun caption",
     tags: "#ZUSMindBreakMission #ChampionsFuelChampions",

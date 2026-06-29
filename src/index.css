@@ -8,8 +8,16 @@
   --bg: #f4f5fb;
   --green: #1f8a4c;
   --red: #c0392b;
-  --boost: #fff4e0;
-  --boost-line: #e8c98a;
+  /* light orange-gold booster theme — still used by the week-target badge & the
+     drawer's bonus section (the breakdown activity cards now use pink, see below) */
+  --boost: #ffe7c4;
+  --boost-line: #f0c074;
+  /* weekly-table activity hues, grouped by submission: weigh-in + steps (blue, the
+     Monday report pair) / workouts (green) / booster + bonus (pink, so they pop
+     against the gold highlighted-week row). Drawer summary keeps them all green. */
+  --pink: #c2185b;
+  --pink-bg: #fde4ee;
+  --pink-line: #f3b3cd;
 }
 * {
   box-sizing: border-box;
@@ -207,7 +215,26 @@ header.hero .gold {
 .wp-strip {
   display: flex;
   flex-direction: column;
+  gap: 12px;
+}
+/* the two submission bookends (① open / ② report) each get a heading */
+.wp-group {
+  display: flex;
+  flex-direction: column;
   gap: 5px;
+}
+.wp-ghead {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+/* deadline footnote under the report group */
+.wp-deadline {
+  margin: 2px 0 0;
+  font-size: 0.66rem;
+  line-height: 1.35;
+  color: var(--muted);
 }
 .wp-actions {
   list-style: none;
@@ -239,6 +266,13 @@ header.hero .gold {
   font-weight: 500;
   font-size: 0.66rem;
 }
+.wp-cnote {
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 0.62rem;
+  font-style: italic;
+  opacity: 0.75;
+}
 /* per-card point value, pinned to the top-right corner */
 .wp-pts {
   position: absolute;
@@ -258,44 +292,56 @@ header.hero .gold {
 .wp-act.report .wp-clabel {
   color: var(--zus-blue);
 }
-.wp-act.workout,
-.wp-act.steps {
+.wp-act.workout {
   background: #e7f5ed;
   border: 1px solid #bfe3cd;
   border-left: 3px solid var(--green);
 }
-.wp-act.workout .wp-clabel,
-.wp-act.steps .wp-clabel {
+.wp-act.workout .wp-clabel {
   color: var(--green);
 }
+/* steps share the blue "Monday report" colour with the weigh-in — they're almost
+   always the same next-Monday submission, so grouping them by colour reads as one pair */
+.wp-act.steps {
+  background: var(--zus-blue-light);
+  border: 1px solid #c3cbef;
+  border-left: 3px solid var(--zus-blue);
+}
+.wp-act.steps .wp-clabel {
+  color: var(--zus-blue);
+}
+/* booster + bonus (ZUS Moments) use pink so they pop against the gold/yellow
+   highlighted-week row instead of blending into it */
 .wp-act.booster {
-  background: var(--boost);
-  border: 1px solid var(--boost-line);
-  border-left: 3px solid var(--zus-gold);
+  background: var(--pink-bg);
+  border: 1px solid var(--pink-line);
+  border-left: 3px solid var(--pink);
 }
 .wp-act.booster .wp-clabel {
-  color: #8a6420;
+  color: var(--pink);
 }
-/* combo = booster that also counts as a workout: gold fill, green bezel for the workout double-duty */
+/* combo = booster that also counts as a workout: pink fill, green bezel for the workout double-duty */
 .wp-act.combo {
-  background: var(--boost);
-  border: 1px solid var(--boost-line);
+  background: var(--pink-bg);
+  border: 1px solid var(--pink-line);
   border-left: 3px solid var(--green);
 }
 .wp-act.combo .wp-clabel {
-  color: #8a6420;
+  color: var(--pink);
 }
 /* point badge inherits its card's category colour */
 .wp-act.report .wp-pts {
   color: var(--zus-blue);
 }
-.wp-act.workout .wp-pts,
-.wp-act.steps .wp-pts {
+.wp-act.workout .wp-pts {
   color: var(--green);
+}
+.wp-act.steps .wp-pts {
+  color: var(--zus-blue);
 }
 .wp-act.booster .wp-pts,
 .wp-act.combo .wp-pts {
-  color: #8a6420;
+  color: var(--pink);
 }
 
 /* ---------- Weekly recurring summary ---------- */
@@ -501,37 +547,54 @@ td.wk {
   font-weight: 700;
   color: var(--zus-blue);
 }
-.tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: var(--boost);
-  border: 1px solid var(--boost-line);
-  color: #8a6420;
-  border-radius: 6px;
-  padding: 1px 6px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  margin-top: 3px;
-}
-/* copy-hashtags button — sits inside the .tag pill, to the right of the text */
+/* "copy hashtags" control on the BONUS card in the week breakdown: drops to its own
+   line spanning the full content width. Negative left/right margins reclaim the card's
+   8px-left / 56px-right padding (the right padding only reserves space for the absolute
+   points badge on the first line) so the bar reaches the inner card edges and sits as a
+   footer bar. Hashtags fill the left, the copy zone (icon + "Copy") sits on the right. */
 .copytags {
+  flex: 1 0 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: stretch;
+  margin: 6px -56px -4px -8px;
+  padding: 0;
+  border: 0;
+  border-top: 1px solid var(--pink-line);
+  border-radius: 0 0 5px 5px;
+  background: var(--pink-bg);
+  color: var(--pink);
+  cursor: pointer;
+  text-align: left;
+  overflow: hidden;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.copytags:hover {
+  background: #fbd3e3;
+  border-color: var(--pink);
+}
+.copytags-text {
+  flex: 1 1 80%;
+  min-width: 0;
+  padding: 6px 8px;
+  font-size: 0.66rem;
+  font-weight: 600;
+  line-height: 1.3;
+  word-break: break-word;
+}
+.copytags-cta {
+  flex: 0 0 auto;
+  min-width: 20%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 2px;
-  margin: -2px -3px -2px 0;
-  border: 0;
-  background: none;
-  color: #8a6420;
-  cursor: pointer;
-  border-radius: 4px;
-  opacity: 0.65;
-  transition: opacity 0.15s ease, background 0.15s ease;
-}
-.copytags:hover {
-  opacity: 1;
-  background: var(--boost-line);
+  gap: 4px;
+  padding: 6px 8px;
+  border-left: 1px solid var(--pink-line);
+  background: rgba(194, 24, 91, 0.1);
+  font-size: 0.68rem;
+  font-weight: 800;
+  white-space: nowrap;
 }
 .post {
   font-size: 0.72rem;
@@ -551,21 +614,6 @@ td.wk {
 }
 .wikilink:hover {
   text-decoration: underline;
-}
-.bonusline {
-  display: inline-block;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #8a6420;
-  margin-top: 2px;
-}
-.extraline {
-  display: inline-block;
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: #8a6420;
-  opacity: 0.85;
-  margin-top: 1px;
 }
 /* Week target — compact stack: total, baseline, + booster (with its 30/40) */
 td.wkmax {
@@ -826,9 +874,6 @@ td.total {
   } /* smaller header so cols stay narrow */
   .tablecard tbody td {
     padding: 6px 6px;
-  }
-  .tag {
-    white-space: normal;
   }
   /* week column: allow dates to wrap, but give it enough width to avoid
      breaking into too many lines on the longer date ranges */
