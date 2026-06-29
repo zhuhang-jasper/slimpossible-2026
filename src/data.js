@@ -142,11 +142,11 @@ export function buildDayPlan(booster) {
   return [
     {
       group: "start",
-      heading: "① Open the week — Monday weigh-in (leave the rest blank)",
+      heading: "① Open the week — Monday",
       items: [
         {
           kind: "report",
-          label: isFirstWeek ? "Initial weigh-in (baseline)" : "Weigh-in",
+          label: isFirstWeek ? "Initial weigh-in (baseline)" : "Weigh-in (leave rest blank)",
           cue: "own form · pick this week · weight + scale photo (feet + number)",
           pts: isFirstWeek ? "baseline" : "+0 / 10 / 40",
         },
@@ -154,7 +154,7 @@ export function buildDayPlan(booster) {
     },
     {
       group: "report",
-      heading: "② Report the week — by next Monday (leave weight blank)",
+      heading: "② Submit report — by next Mon (leave weight blank)",
       items: [
         {
           kind: "steps",

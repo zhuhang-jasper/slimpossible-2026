@@ -7,20 +7,34 @@ import { BIWEEKLY_MAX, BONUS_TASKS, BOOSTER_META, BOOSTERS, buildDayPlan, CHALLE
 
 // Challenge reference (every-week tasks, bonus actionables, how-to-read) lives in a
 // right-side drawer so the booster table is the first thing in the main scroll flow.
-function DetailsDrawer({ open, onClose }) {
+function DetailsDrawer({ open, target = "top", onClose }) {
   const fmt = (n) => n.toLocaleString("en-US");
   const closeRef = useRef(null);
   const bodyRef = useRef(null);
+  const bonusRef = useRef(null);
 
   // Lock body scroll, close on Esc, and move focus into the drawer while it's open.
   useEffect(() => {
     if (!open) {
       return;
     }
-    // Always present the drawer from the top, regardless of where it was last scrolled.
-    if (bodyRef.current) {
-      bodyRef.current.scrollTop = 0;
-    }
+    // Land on the requested section: the bonus block for booster/bonus cards,
+    // otherwise the top. Defer to the next frame so the panel has finished opening
+    // (and laid out) before we measure/scroll.
+    requestAnimationFrame(() => {
+      if (!bodyRef.current) {
+        return;
+      }
+      if (target === "bonus" && bonusRef.current) {
+        // Offset the section's viewport position into the scroller's own coordinate
+        // space — robust regardless of which ancestor is the section's offsetParent.
+        const bodyRect = bodyRef.current.getBoundingClientRect();
+        const sectionRect = bonusRef.current.getBoundingClientRect();
+        bodyRef.current.scrollTop += sectionRect.top - bodyRect.top;
+      } else {
+        bodyRef.current.scrollTop = 0;
+      }
+    });
     const onKeyDown = (event) => {
       if (event.key === "Escape") {
         onClose();
@@ -34,7 +48,7 @@ function DetailsDrawer({ open, onClose }) {
       document.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = prevOverflow;
     };
-  }, [open, onClose]);
+  }, [open, target, onClose]);
 
   return (
     <div className={`drawer-root${open ? " open" : ""}`} aria-hidden={!open}>
@@ -52,7 +66,7 @@ function DetailsDrawer({ open, onClose }) {
           {/* Every-week tasks */}
           <section className="recurring">
             <h2>
-              🔁 Do these EVERY week (W1–W14) <span className="maxbadge">up to {WEEK_MAX} pts/wk</span>
+              🔁 Do these EVERY week (W1–W14) <span className="maxbadge">upto {WEEK_MAX} pt/wk</span>
             </h2>
             <p className="scope everyweek-scope">— All submissions go to the Lark Base Tracker</p>
             <div className="pill-row">
@@ -84,10 +98,10 @@ function DetailsDrawer({ open, onClose }) {
           </section>
 
           {/* Bonus actionables — boosters only */}
-          <section className="recurring bonus">
+          <section className="recurring bonus" ref={bonusRef}>
             <h2>
               <span className="h2-title">🌟 Bonus actionables</span>
-              <span className="maxbadge bonus-max">up to 40++ pts/wk</span>
+              <span className="maxbadge bonus-max">upto 40++ pt/wk</span>
             </h2>
             <p className="scope">— BOOSTERS ONLY (does NOT apply to weigh-in / steps / workouts)</p>
             <div className="pill-row">
@@ -124,25 +138,25 @@ function DetailsDrawer({ open, onClose }) {
                 <b>{fmt(WEEK_MAX * BOOSTERS.length)}</b> — your leaderboard benchmark.
               </li>
               <li>
-                <b>Each week has two submission bookends</b> (expand a week to see them):{" "}
-                <b>① Open</b> — on Monday, a weigh-in form: pick that week, enter your Monday-morning weight, leave the rest blank.{" "}
-                <b>② Report</b> — the week's activities (steps + workouts + booster + bonus), with the weight left blank.
+                <b>Each week has two submission bookends</b> (expand a week to see them): <b>① Open</b> — on Monday, a weigh-in form: pick that week,
+                enter your Monday-morning weight, leave the rest blank. <b>② Report</b> — the week's activities (steps + workouts + booster + bonus),
+                with the weight left blank.
               </li>
               <li>
-                <b>The report is due by the FOLLOWING Monday</b> — but you can submit earlier (e.g. each workout on the day it
-                happens). <b>Week 1 is just the baseline weigh-in</b> to open the challenge.
+                <b>The report is due by the FOLLOWING Monday</b> — but you can submit earlier (e.g. each workout on the day it happens).{" "}
+                <b>Week 1 is just the baseline weigh-in</b> to open the challenge.
               </li>
               <li>
-                <b>Each Lark Base form takes only ONE workout</b> ("Type Of Activity" is single-select), so 3 workouts means 3 forms.
-                Steps, booster and the ZUS Moments post can ride on any of those forms, or go on their own — your choice.
+                <b>Each Lark Base form takes only ONE workout</b> ("Type Of Activity" is single-select), so 3 workouts means 3 forms. Steps, booster
+                and the ZUS Moments post can ride on any of those forms, or go on their own — your choice.
               </li>
               <li>
-                <b>Every field reveals its own proof upload</b> once you fill it — weight needs a scale photo, steps a screenshot,
-                each workout a face photo/video, the booster its proof, and the ZUS Moments post a screenshot.
+                <b>Every field reveals its own proof upload</b> once you fill it — weight needs a scale photo, steps a screenshot, each workout a face
+                photo/video, the booster its proof, and the ZUS Moments post a screenshot.
               </li>
               <li>
-                Even when the booster is a workout-type activity (Buddy Steps, Pace), it does <b>not</b> count as one of your 3
-                workouts — the booster and each workout are separate submissions.
+                Even when the booster is a workout-type activity (Buddy Steps, Pace), it does <b>not</b> count as one of your 3 workouts — the booster
+                and each workout are separate submissions.
               </li>
               <li>
                 All activities must be done <b>outside working hours</b>. Only weight <i>losses</i> earn points (maintain/gain = 0).
@@ -244,8 +258,11 @@ export default function App() {
   });
 
   // Challenge-details drawer (every-week tasks, bonus actionables, how-to-read).
+  // `detailsTarget` picks which section the drawer lands on when it opens.
   const [detailsOpen, setDetailsOpen] = useState(false);
-  const openDetails = (source) => {
+  const [detailsTarget, setDetailsTarget] = useState("top");
+  const openDetails = (source, target = "top") => {
+    setDetailsTarget(target);
     setDetailsOpen(true);
     track("open_details", { source });
   };
@@ -263,8 +280,7 @@ export default function App() {
     // height. Measure the TH (not the THEAD) so the cell's border-bottom is
     // included — the thead's box doesn't grow by the collapsed border, which left
     // the row landing ~2px low.
-    const heroPin =
-      parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--hero-h")) || 0;
+    const heroPin = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--hero-h")) || 0;
     const th = document.querySelector(".tablecard thead th");
     const headerH = th ? th.getBoundingClientRect().height : 0;
     // +1: land the row 1px lower so it clears the header's bottom edge, hiding the
@@ -469,7 +485,8 @@ export default function App() {
                                             aria-label="How points are scored — open challenge details"
                                             onClick={(event) => {
                                               event.stopPropagation();
-                                              openDetails("card_points");
+                                              // booster + bonus cards point at the bonus section; everything else lands at the top
+                                              openDetails("card_points", d.kind === "booster" ? "bonus" : "top");
                                             }}
                                             onKeyDown={(event) => event.stopPropagation()}
                                           >
@@ -507,7 +524,7 @@ export default function App() {
         </div>
       </div>
 
-      <DetailsDrawer open={detailsOpen} onClose={() => setDetailsOpen(false)} />
+      <DetailsDrawer open={detailsOpen} target={detailsTarget} onClose={() => setDetailsOpen(false)} />
 
       <footer className="footer">
         © 2026 Jasper Loo Zhu Hang · All rights reserved · <span className="ver">v{import.meta.env.VITE_APP_VERSION}</span>

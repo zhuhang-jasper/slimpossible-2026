@@ -407,9 +407,9 @@ header.hero .gold {
   white-space: nowrap;
 }
 .maxbadge.bonus-max {
-  color: #8a6420;
-  background: var(--boost);
-  border-color: var(--boost-line);
+  color: var(--pink);
+  background: var(--pink-bg);
+  border-color: var(--pink-line);
 }
 .pill-row {
   display: grid;
@@ -448,16 +448,16 @@ header.hero .gold {
   white-space: nowrap;
 }
 .pill .t .cap.bonus-cap {
-  color: #8a6420;
-  background: var(--boost);
-  border-color: var(--boost-line);
+  color: var(--pink);
+  background: var(--pink-bg);
+  border-color: var(--pink-line);
 }
 .bonus {
-  background: linear-gradient(180deg, #fffaf0, #fff);
-  border-color: var(--boost-line);
+  background: linear-gradient(180deg, var(--pink-bg), #fff);
+  border-color: var(--pink-line);
 }
 .bonus h2 {
-  color: #8a6420;
+  color: var(--pink);
 }
 .pill .d {
   font-size: 0.72rem;
