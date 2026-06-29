@@ -38,6 +38,10 @@ body {
   background: var(--bg);
   color: var(--ink);
   line-height: 1.45;
+  /* PWA: kill double-tap-to-zoom and pinch-zoom gestures. The viewport meta
+     handles most browsers; this covers iOS Safari which ignores user-scalable=no. */
+  touch-action: pan-x pan-y;
+  -webkit-text-size-adjust: 100%;
   /* top padding == hero's sticky `top` (8px) so the hero rests exactly where it
      pins — no layout shift when scrolling between top and stuck states */
   padding: 8px 16px 24px;
