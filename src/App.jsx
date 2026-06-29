@@ -5,6 +5,11 @@ import { BookOpen, Check, ClipboardList, Copy, ExternalLink, Info } from "lucide
 import { track } from "./utils/analytics.js";
 import { BIWEEKLY_MAX, BONUS_TASKS, BOOSTER_META, BOOSTERS, buildDayPlan, CHALLENGE_START, WEEK_MAX, WEEKLY_TASKS } from "./data.js";
 
+// Feature flag: pin the expanded week's row under the table header while scrolling its
+// (often tall) action plan. Off for now — flip to true to re-enable. Adds a class on
+// .tablecard that the sticky CSS keys off (see .sticky-week-row in index.css).
+const STICKY_WEEK_ROW = false;
+
 // Challenge reference (every-week tasks, bonus actionables, how-to-read) lives in a
 // right-side drawer so the booster table is the first thing in the main scroll flow.
 function DetailsDrawer({ open, target = "top", onClose }) {
@@ -323,10 +328,21 @@ export default function App() {
         // fractional pin leaves a sub-pixel hairline/gap against the row below it.
         `${Math.round(hero.getBoundingClientRect().height + 8 + 8 + 1)}px`,
       );
+      // --header-h = the table header's own height, so an expanded week row can pin
+      // directly under it via top: calc(--hero-h + --header-h). Measure the TH (not
+      // the THEAD) so the cell's collapsed border-bottom is included.
+      const th = document.querySelector(".tablecard thead th");
+      if (th) {
+        document.documentElement.style.setProperty("--header-h", `${Math.round(th.getBoundingClientRect().height)}px`);
+      }
     };
     setHeroH();
     const ro = new ResizeObserver(setHeroH);
     ro.observe(hero);
+    const th = document.querySelector(".tablecard thead th");
+    if (th) {
+      ro.observe(th);
+    }
     // Auto-scroll the current week into view on load.
     if (currentWeek >= 0) {
       scrollRowIntoView(currentWeek);
@@ -371,7 +387,7 @@ export default function App() {
       </header>
 
       {/* Booster rotation table */}
-      <div className="tablecard">
+      <div className={`tablecard${STICKY_WEEK_ROW ? " sticky-week-row" : ""}`}>
         <div className="scroll">
           <table>
             <thead>
@@ -430,33 +446,32 @@ export default function App() {
                         </span>
                         <br />
                         <span className="post">{b.desc}</span>
-                        {/* wiki link only shows when the week is expanded */}
-                        {open && BOOSTER_META[b.phase]?.wikiUrl && (
-                          <>
-                            <br />
-                            <a
-                              className="wikilink"
-                              href={BOOSTER_META[b.phase].wikiUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              // the row is itself a toggle button — don't let the link
-                              // click (or keyboard activation) bubble up and collapse it
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                track("open_link", { link: "booster_wiki", week: b.wk });
-                              }}
-                              onKeyDown={(event) => event.stopPropagation()}
-                            >
-                              Click here to see booster's wiki
-                              <ExternalLink size={12} strokeWidth={2.25} aria-hidden="true" />
-                            </a>
-                          </>
-                        )}
                       </td>
                       <td className="wkmax">
                         <span className="wkmax-total">{WEEK_MAX}</span>
                       </td>
                     </tr>
+                    {/* wiki link as its own row (Week + Target cells blank), so it reads as a
+                        continuation of the week row — but it's a SEPARATE row, so only the week
+                        row above pins on scroll and the wiki line scrolls away with the plan */}
+                    {open && BOOSTER_META[b.phase]?.wikiUrl && (
+                      <tr className={`wikirow${b.isCurrent ? " current" : ""}`}>
+                        <td className="wk" aria-hidden="true" />
+                        <td>
+                          <a
+                            className="wikilink"
+                            href={BOOSTER_META[b.phase].wikiUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => track("open_link", { link: "booster_wiki", week: b.wk })}
+                          >
+                            Click here to see booster's wiki
+                            <ExternalLink size={12} strokeWidth={2.25} aria-hidden="true" />
+                          </a>
+                        </td>
+                        <td className="wkmax" aria-hidden="true" />
+                      </tr>
+                    )}
                     {open && (
                       <tr className={`planrow${b.isCurrent ? " current" : ""}`}>
                         <td colSpan={3} aria-label={`Week ${b.wk} day plan`}>

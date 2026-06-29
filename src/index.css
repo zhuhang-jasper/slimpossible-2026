@@ -212,6 +212,36 @@ header.hero .gold {
     inset -3px 0 0 var(--zus-blue),
     inset 0 -3px 0 var(--zus-blue);
 }
+/* wiki-link row: a separate row that reads as a continuation of the week row above
+   (same tint, no top border, blue side rails) but stays out of the sticky pin so it
+   scrolls away with the plan. Tight top padding tucks the link under the booster desc. */
+.tablecard tbody tr.wikirow > td {
+  border-top: 0;
+  padding: 0 10px 8px;
+  background: #f2f0ea;
+  text-align: left;
+}
+.tablecard tbody tr.wikirow.current > td {
+  background: #fff2c2;
+}
+/* blue side rails — both current and non-current open weeks get the wrapping box */
+.tablecard tbody tr.wikirow > td:first-child {
+  box-shadow: inset 3px 0 0 var(--zus-blue);
+}
+.tablecard tbody tr.wikirow > td:last-child {
+  box-shadow: inset -3px 0 0 var(--zus-blue);
+}
+/* an expanded week row pins just under the table header so it stays visible while
+   you scroll its (often tall) action plan. Sticky goes on the cells, not the <tr>
+   (browsers don't reliably support sticky table rows). z-index 1 lifts it above
+   normal body rows but stays below the header (z-index 2). The open-row background
+   rules above keep the cells opaque so scrolled content can't show through.
+   Gated behind the STICKY_WEEK_ROW feature flag (.sticky-week-row on .tablecard). */
+.tablecard.sticky-week-row tbody tr.wkrow.open > td {
+  position: sticky;
+  top: calc(var(--hero-h, 0px) + var(--header-h, 0px));
+  z-index: 1;
+}
 .wp-strip {
   display: flex;
   flex-direction: column;
@@ -739,7 +769,6 @@ td.wk {
   font-weight: 600;
   color: var(--zus-blue);
   text-decoration: none;
-  margin-top: 8px;
 }
 .wikilink:hover {
   text-decoration: underline;
