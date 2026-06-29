@@ -152,14 +152,21 @@ header.hero .gold {
 .wkrow {
   cursor: pointer;
 }
-/* slightly dim collapsed weeks; current + expanded weeks stay full opacity */
+/* slightly dim collapsed weeks; the current week stays full opacity */
 .tablecard tbody tr.wkrow:not(.current):not(.open) {
   opacity: 0.6;
+}
+/* an expanded future/past week lifts most of the way back, but holds a faint 0.9 so it
+   still reads as "not this week" — applied across the whole open block (week + wiki + plan) */
+.tablecard tbody tr.wkrow.open:not(.current),
+.tablecard tbody tr.wikirow:not(.current),
+.tablecard tbody tr.planrow:not(.current) {
+  opacity: 0.75;
 }
 /* hover: apply at td level so it overrides nth-child striping + the total cell uniformly
    (only on collapsed, non-current rows so it doesn't fight their own backgrounds) */
 .tablecard tbody tr.wkrow:not(.current):not(.open):hover {
-  opacity: 1;
+  opacity: 0.6;
 }
 .tablecard tbody tr.wkrow:not(.current):not(.open):hover > td {
   background: #f2f0ea !important;
