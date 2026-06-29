@@ -252,13 +252,18 @@ header.hero .gold {
 .wp-strip {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 4px;
 }
 /* the two submission bookends (① open / ② report) each get a heading */
 .wp-group {
   display: flex;
   flex-direction: column;
   gap: 5px;
+}
+/* forms sit tight (4px strip gap), but the ② Submit-report section needs a clear break
+   from ① Open above it — restore the section spacing just before its heading */
+.wp-group-report {
+  margin-top: 6px;
 }
 .wp-ghead {
   margin: 0;
