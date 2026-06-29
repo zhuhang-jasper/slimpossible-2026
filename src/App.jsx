@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 
-import { BookOpen, Check, ClipboardList, Copy, ExternalLink, Info } from "lucide-react";
+import { BookOpen, Check, CircleHelp, ClipboardList, Copy, ExternalLink, Info } from "lucide-react";
 
 import InstallPrompt, { InstallCard } from "./components/InstallPrompt.jsx";
 import { track } from "./utils/analytics.js";
@@ -359,7 +359,7 @@ export default function App() {
     <div className="wrap">
       <header className="hero">
         <button type="button" className="hero-info" onClick={() => openDetails("hero_info")} aria-label="Open challenge details">
-          <Info size={20} strokeWidth={2.25} aria-hidden="true" />
+          <CircleHelp size={20} strokeWidth={2.25} aria-hidden="true" />
         </button>
         <h1>🏋️ SlimPossible Challenge 2026</h1>
         <div className="sub">
