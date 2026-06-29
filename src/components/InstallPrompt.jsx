@@ -3,40 +3,14 @@ import { useCallback, useEffect, useState } from "react";
 import { Download, Share, SquarePlus, X } from "lucide-react";
 
 import { track } from "../utils/analytics.js";
+import { useInstallPrompt } from "../utils/useInstallPrompt.js";
 
-// Local-storage key for "user dismissed the install prompt". Once set, we stay quiet
+// Local-storage key for "user dismissed the floating banner". Once set, we stay quiet
 // for DISMISS_DAYS before offering again — long enough to not nag, short enough that a
-// new challenge week (the booster rotates fortnightly) reminds latecomers.
+// new challenge week (the booster rotates fortnightly) reminds latecomers. The in-drawer
+// card ignores this — it's always available for users who closed the banner.
 const DISMISS_KEY = "sp_install_dismissed_at";
 const DISMISS_DAYS = 14;
-
-// Already running as an installed app? Mirrors the display-mode checks in analytics.js
-// (kept local so this component stays self-contained).
-function isStandalone() {
-  if (typeof window === "undefined") {
-    return false;
-  }
-  if (window.navigator.standalone === true) {
-    return true; // iOS installed PWA
-  }
-  if (document.referrer.startsWith("android-app://")) {
-    return true; // Android TWA
-  }
-  return ["fullscreen", "standalone", "minimal-ui"].some((m) => window.matchMedia(`(display-mode: ${m})`).matches);
-}
-
-// iOS Safari never fires beforeinstallprompt, so installs there are manual
-// (Share → Add to Home Screen). Detect it so we can show instructions instead of a button.
-function isIosSafari() {
-  if (typeof navigator === "undefined") {
-    return false;
-  }
-  const ua = navigator.userAgent;
-  const iOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-  // Exclude in-app browsers / other engines that masquerade — only real Safari can A2HS.
-  const webkit = /WebKit/.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS/.test(ua);
-  return iOS && webkit;
-}
 
 function dismissedRecently() {
   try {
@@ -50,53 +24,41 @@ function dismissedRecently() {
   }
 }
 
+// The iOS "Share → Add to Home Screen" instruction line, shared by both surfaces.
+function IosHintText() {
+  return (
+    <>
+      It&rsquo;s just this page — nothing to download. Tap{" "}
+      <Share size={14} strokeWidth={2.5} className="install-inline-icon" aria-label="the Share button" /> then{" "}
+      <b>
+        Add to Home Screen <SquarePlus size={14} strokeWidth={2.5} className="install-inline-icon" aria-hidden="true" />
+      </b>
+      .
+    </>
+  );
+}
+
 /**
- * A dismissible "install this app" banner.
- *
- * - Chrome / Edge / Android: captures the deferred `beforeinstallprompt` event and shows
- *   a one-tap Install button that calls the native prompt.
- * - iOS Safari: shows manual "Share → Add to Home Screen" instructions (no native prompt).
- * - Already installed, or no install path available: renders nothing.
+ * Floating, dismissible "install this app" banner pinned to the bottom of the viewport.
+ * Shown only in a browser tab (not when installed) and respects a 14-day dismissal.
  */
-export default function InstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const [iosHint, setIosHint] = useState(false);
+function InstallPrompt() {
+  const { installed, canInstall, iosHint, install } = useInstallPrompt("banner");
   const [visible, setVisible] = useState(false);
 
+  // Reveal once we know there's an install path to offer, unless recently dismissed.
   useEffect(() => {
-    if (isStandalone() || dismissedRecently()) {
+    if (installed || dismissedRecently()) {
       return;
     }
-
-    // Chrome/Edge/Android: stash the event so we can trigger the prompt on tap.
-    const onBeforeInstall = (event) => {
-      event.preventDefault();
-      setDeferredPrompt(event);
+    if (canInstall) {
       setVisible(true);
-      track("install_prompt_shown", { method: "native" });
-    };
-    window.addEventListener("beforeinstallprompt", onBeforeInstall);
-
-    // Hide the banner once the app is actually installed.
-    const onInstalled = () => {
-      setVisible(false);
-      setDeferredPrompt(null);
-      track("install_accepted", { method: "appinstalled_event" });
-    };
-    window.addEventListener("appinstalled", onInstalled);
-
-    // iOS Safari can't fire beforeinstallprompt — fall back to manual instructions.
-    if (isIosSafari()) {
-      setIosHint(true);
+      track("install_prompt_shown", { method: "native", source: "banner" });
+    } else if (iosHint) {
       setVisible(true);
-      track("install_prompt_shown", { method: "ios" });
+      track("install_prompt_shown", { method: "ios", source: "banner" });
     }
-
-    return () => {
-      window.removeEventListener("beforeinstallprompt", onBeforeInstall);
-      window.removeEventListener("appinstalled", onInstalled);
-    };
-  }, []);
+  }, [installed, canInstall, iosHint]);
 
   const dismiss = useCallback(() => {
     setVisible(false);
@@ -105,21 +67,17 @@ export default function InstallPrompt() {
     } catch {
       // ignore storage failures (private mode etc.) — we just won't remember.
     }
-    track("install_prompt_dismissed", { method: iosHint ? "ios" : "native" });
+    track("install_prompt_dismissed", { method: iosHint ? "ios" : "native", source: "banner" });
   }, [iosHint]);
 
-  const install = useCallback(async () => {
-    if (!deferredPrompt) {
-      return;
+  const onInstall = useCallback(async () => {
+    const outcome = await install();
+    if (outcome === "accepted") {
+      setVisible(false);
     }
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    track(outcome === "accepted" ? "install_accepted" : "install_dismissed", { method: "native_choice" });
-    setDeferredPrompt(null);
-    setVisible(false);
-  }, [deferredPrompt]);
+  }, [install]);
 
-  if (!visible) {
+  if (!visible || installed) {
     return null;
   }
 
@@ -132,12 +90,7 @@ export default function InstallPrompt() {
         <p className="install-title">Add to your home screen</p>
         {iosHint ? (
           <p className="install-text">
-            It&rsquo;s just this page — nothing to download. Tap{" "}
-            <Share size={14} strokeWidth={2.5} className="install-inline-icon" aria-label="the Share button" /> then{" "}
-            <b>
-              Add to Home Screen <SquarePlus size={14} strokeWidth={2.5} className="install-inline-icon" aria-hidden="true" />
-            </b>
-            .
+            <IosHintText />
           </p>
         ) : (
           <p className="install-text">
@@ -145,8 +98,8 @@ export default function InstallPrompt() {
           </p>
         )}
       </div>
-      {!iosHint && (
-        <button type="button" className="install-cta" onClick={install}>
+      {canInstall && (
+        <button type="button" className="install-cta" onClick={onInstall}>
           Install
         </button>
       )}
@@ -156,3 +109,55 @@ export default function InstallPrompt() {
     </section>
   );
 }
+
+/**
+ * Persistent install card for the bottom of the details drawer. Unlike the floating
+ * banner, this has no dismiss timer — it's always available while the user is in a
+ * browser tab, so latecomers who closed the banner still have a way in.
+ *
+ * Renders nothing once installed, or when there's no install path (e.g. a desktop
+ * browser that never fired beforeinstallprompt and isn't iOS Safari).
+ */
+function InstallCard() {
+  const { installed, canInstall, iosHint, install } = useInstallPrompt("drawer_card");
+
+  // Announce the card once, when it first becomes available.
+  useEffect(() => {
+    if (installed) {
+      return;
+    }
+    if (canInstall) {
+      track("install_prompt_shown", { method: "native", source: "drawer_card" });
+    } else if (iosHint) {
+      track("install_prompt_shown", { method: "ios", source: "drawer_card" });
+    }
+  }, [installed, canInstall, iosHint]);
+
+  if (installed || (!canInstall && !iosHint)) {
+    return null;
+  }
+
+  return (
+    <section className="install-card">
+      <h2>📲 Install this app</h2>
+      <p className="install-card-text">
+        {iosHint ? (
+          <IosHintText />
+        ) : (
+          <>
+            Add <b>SlimPossible 2026</b> to your home screen for one-tap, full-screen access. It&rsquo;s just this web page — nothing to download.
+          </>
+        )}
+      </p>
+      {canInstall && (
+        <button type="button" className="install-card-cta" onClick={install}>
+          <Download size={16} strokeWidth={2.25} aria-hidden="true" />
+          Install
+        </button>
+      )}
+    </section>
+  );
+}
+
+export default InstallPrompt;
+export { InstallCard };

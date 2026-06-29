@@ -1193,3 +1193,45 @@ td.total {
   background: var(--zus-blue-light);
   color: var(--ink);
 }
+
+/* ---------- PWA install card (inside the details drawer) ---------- */
+/* Same card chrome as .legend/.links, with a ZUS-blue accent to read as an action. */
+.install-card {
+  margin-top: 14px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--zus-blue);
+  border-radius: 14px;
+  padding: 20px 22px;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.install-card h2 {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  color: var(--zus-blue);
+}
+.install-card-text {
+  margin: 0;
+}
+.install-card-text b {
+  color: var(--ink);
+}
+.install-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+  padding: 9px 18px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--zus-blue);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.install-card-cta:hover {
+  background: #16207a;
+}

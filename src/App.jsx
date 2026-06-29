@@ -2,7 +2,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 
 import { BookOpen, Check, ClipboardList, Copy, ExternalLink, Info } from "lucide-react";
 
-import InstallPrompt from "./components/InstallPrompt.jsx";
+import InstallPrompt, { InstallCard } from "./components/InstallPrompt.jsx";
 import { track } from "./utils/analytics.js";
 import { BIWEEKLY_MAX, BONUS_TASKS, BOOSTER_META, BOOSTERS, buildDayPlan, CHALLENGE_START, WEEK_MAX, WEEKLY_TASKS } from "./data.js";
 
@@ -200,6 +200,8 @@ function DetailsDrawer({ open, target = "top", onClose }) {
               </li>
             </ul>
           </section>
+
+          <InstallCard />
         </div>
       </aside>
     </div>
