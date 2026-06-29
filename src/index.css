@@ -244,22 +244,44 @@ header.hero .gold {
   flex-direction: column;
   gap: 4px;
 }
+/* a card is two stacked rows (head, body) plus an optional copytags footer */
 .wp-act {
-  position: relative;
   display: flex;
-  align-items: baseline;
-  gap: 6px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 4px;
   border: 1px solid var(--line);
   border-radius: 6px;
   background: #fff;
-  /* extra right padding reserves room for the absolutely-positioned points badge */
-  padding: 4px 56px 4px 8px;
+  padding: 6px 8px;
   font-size: 0.7rem;
   line-height: 1.3;
 }
+/* each row: content on the left, points/icon on the right, vertically centered */
+.wp-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* row 1 — title on the left, points on the right */
 .wp-clabel {
+  flex: 1 1 auto;
+  min-width: 0;
   font-weight: 700;
+}
+.wp-pts {
+  flex: 0 0 auto;
+  font-weight: 800;
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* row 2 — description (cue + tiny tip) on the left, info icon on the right */
+.wp-cdesc {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 .wp-ccue {
   color: var(--muted);
@@ -269,19 +291,27 @@ header.hero .gold {
 .wp-cnote {
   color: var(--muted);
   font-weight: 500;
-  font-size: 0.62rem;
+  font-size: 0.66rem;
   font-style: italic;
   opacity: 0.75;
 }
-/* per-card point value, pinned to the top-right corner */
-.wp-pts {
-  position: absolute;
-  top: 4px;
-  right: 8px;
-  font-weight: 800;
-  font-size: 0.72rem;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+/* info affordance — opens the challenge-details drawer */
+.wp-pts-info {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 0.15s ease;
+}
+.wp-pts-info:hover,
+.wp-pts-info:focus-visible {
+  opacity: 1;
 }
 /* every card gets a colour-coded left bezel matching its category */
 .wp-act.report {
@@ -329,18 +359,23 @@ header.hero .gold {
 .wp-act.combo .wp-clabel {
   color: var(--pink);
 }
-/* point badge inherits its card's category colour */
-.wp-act.report .wp-pts {
+/* points value + info icon inherit their card's category colour */
+.wp-act.report .wp-pts,
+.wp-act.report .wp-pts-info {
   color: var(--zus-blue);
 }
-.wp-act.workout .wp-pts {
+.wp-act.workout .wp-pts,
+.wp-act.workout .wp-pts-info {
   color: var(--green);
 }
-.wp-act.steps .wp-pts {
+.wp-act.steps .wp-pts,
+.wp-act.steps .wp-pts-info {
   color: var(--zus-blue);
 }
 .wp-act.booster .wp-pts,
-.wp-act.combo .wp-pts {
+.wp-act.booster .wp-pts-info,
+.wp-act.combo .wp-pts,
+.wp-act.combo .wp-pts-info {
   color: var(--pink);
 }
 
@@ -557,7 +592,9 @@ td.wk {
   box-sizing: border-box;
   display: flex;
   align-items: stretch;
-  margin: 6px -56px -4px -8px;
+  /* bleed edge-to-edge across the card's 8px padding to sit as a full-width footer;
+     top spacing comes from the card's flex gap, so no top margin here */
+  margin: 0 -8px -6px -8px;
   padding: 0;
   border: 0;
   border-top: 1px solid var(--pink-line);

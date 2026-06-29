@@ -10,11 +10,16 @@ import { BIWEEKLY_MAX, BONUS_TASKS, BOOSTER_META, BOOSTERS, buildDayPlan, CHALLE
 function DetailsDrawer({ open, onClose }) {
   const fmt = (n) => n.toLocaleString("en-US");
   const closeRef = useRef(null);
+  const bodyRef = useRef(null);
 
   // Lock body scroll, close on Esc, and move focus into the drawer while it's open.
   useEffect(() => {
     if (!open) {
       return;
+    }
+    // Always present the drawer from the top, regardless of where it was last scrolled.
+    if (bodyRef.current) {
+      bodyRef.current.scrollTop = 0;
     }
     const onKeyDown = (event) => {
       if (event.key === "Escape") {
@@ -43,7 +48,7 @@ function DetailsDrawer({ open, onClose }) {
             ✕
           </button>
         </div>
-        <div className="drawer-body">
+        <div className="drawer-body" ref={bodyRef}>
           {/* Every-week tasks */}
           <section className="recurring">
             <h2>
@@ -446,10 +451,32 @@ export default function App() {
                                 <ul className="wp-actions">
                                   {g.items.map((d) => (
                                     <li key={d.label} className={`wp-act ${d.kind}`}>
-                                      <span className="wp-clabel">{d.label}</span>
-                                      {d.cue && <span className="wp-ccue">{d.cue}</span>}
-                                      {d.note && <span className="wp-cnote">{d.note}</span>}
-                                      {d.pts && <span className="wp-pts">{d.pts}</span>}
+                                      {/* row 1: title on the left, points on the right */}
+                                      <div className="wp-row wp-row-head">
+                                        <span className="wp-clabel">{d.label}</span>
+                                        {d.pts && <span className="wp-pts">{d.pts}</span>}
+                                      </div>
+                                      {/* row 2: description on the left, info icon on the right */}
+                                      <div className="wp-row wp-row-body">
+                                        <span className="wp-cdesc">
+                                          {d.cue && <span className="wp-ccue">{d.cue}</span>}
+                                          {d.note && <span className="wp-cnote">{d.note}</span>}
+                                        </span>
+                                        {d.pts && (
+                                          <button
+                                            type="button"
+                                            className="wp-pts-info"
+                                            aria-label="How points are scored — open challenge details"
+                                            onClick={(event) => {
+                                              event.stopPropagation();
+                                              openDetails("card_points");
+                                            }}
+                                            onKeyDown={(event) => event.stopPropagation()}
+                                          >
+                                            <Info size={18} strokeWidth={2.5} aria-hidden="true" />
+                                          </button>
+                                        )}
+                                      </div>
                                       {d.tags && <CopyTags text={d.tags} week={b.wk} />}
                                     </li>
                                   ))}

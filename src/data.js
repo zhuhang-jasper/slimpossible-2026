@@ -142,13 +142,13 @@ export function buildDayPlan(booster) {
   return [
     {
       group: "start",
-      heading: "① Open the week — Monday weigh-in",
+      heading: "① Open the week — Monday weigh-in (leave the rest blank)",
       items: [
         {
           kind: "report",
           label: isFirstWeek ? "Initial weigh-in (baseline)" : "Weigh-in",
-          cue: "own form · pick this week · weight + scale photo (feet + number) · rest blank",
-          pts: isFirstWeek ? "baseline" : "0 / 10 / 40",
+          cue: "own form · pick this week · weight + scale photo (feet + number)",
+          pts: isFirstWeek ? "baseline" : "+0 / 10 / 40",
         },
       ],
     },
@@ -158,34 +158,21 @@ export function buildDayPlan(booster) {
       items: [
         {
           kind: "steps",
-          label: "Walking step count",
-          cue: "this week's total steps · screenshot from any step app · 20k → 20 … 40k+ → 100",
-          pts: "20–100",
+          label: "40k+ Walking step count",
+          cue: "this week's total steps · screenshot from any step app",
+          pts: "+100",
         },
         {
           kind: "workout",
-          label: "Workout 1",
-          cue: "separate day · face photo/video",
-          pts: "+30",
-        },
-        {
-          kind: "workout",
-          label: "Workout 2",
-          cue: "separate day · face photo/video",
-          pts: "+30",
-        },
-        {
-          kind: "workout",
-          label: "Workout 3",
-          cue: "separate day · face photo/video",
-          pts: "+40",
-          note: "3+ workouts caps at 100 total",
+          label: "3 Workout days",
+          cue: "separate day · face photo/video · capped at 3+ workouts",
+          pts: "+100",
         },
         {
           kind: "booster",
           label: `Booster: ${booster.name}`,
           cue: m.proof,
-          pts: "30",
+          pts: "+30",
         },
         {
           kind: "booster",
