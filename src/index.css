@@ -238,10 +238,11 @@ header.hero .gold {
 }
 /* wiki-link row: a separate row that reads as a continuation of the week row above
    (same tint, no top border, blue side rails) but stays out of the sticky pin so it
-   scrolls away with the plan. Tight top padding tucks the link under the booster desc. */
+   scrolls away with the plan. No top padding so the link tucks flush under the booster
+   desc; horizontal padding matches the booster desc cell (10px desktop / 6px ≤640px). */
 .tablecard tbody tr.wikirow > td {
   border-top: 0;
-  padding: 0 10px 8px;
+  padding: 0 10px 9px;
   background: #f2f0ea;
   text-align: left;
 }
@@ -1061,6 +1062,11 @@ td.total {
   } /* smaller header so cols stay narrow */
   .tablecard tbody td {
     padding: 6px 6px;
+  }
+  /* keep the wiki-link cell's horizontal padding in step with the booster desc cell
+     (6px here) so the link stays left-aligned under the description — no top padding */
+  .tablecard tbody tr.wikirow > td {
+    padding: 0 6px 6px;
   }
   /* week column: allow dates to wrap, but give it enough width to avoid
      breaking into too many lines on the longer date ranges */
