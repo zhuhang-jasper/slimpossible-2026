@@ -32,11 +32,11 @@ const ms = {
     ariaLabel: "Butiran cabaran",
 
     everyWeekTitle: "🔁 Buat ini SETIAP minggu (W1–W14)",
-    everyWeekMax: "sehingga {{max}} mata/mgg",
+    everyWeekMax: "had {{max}} mata/mgg",
     everyWeekScope: "— Semua penghantaran ke Lark Base Tracker",
 
     bonusTitle: "🌟 Aktiviti bonus",
-    bonusMax: "sehingga 40++ mata/mgg",
+    bonusMax: "had 40++ mata/mgg",
     bonusScope: "— BOOSTER SAHAJA (TIDAK terpakai untuk timbang berat / langkah / senaman)",
 
     legendTitle: "📌 Cara membaca ini",

@@ -32,11 +32,11 @@ const en = {
     ariaLabel: "Challenge details",
 
     everyWeekTitle: "🔁 Do these EVERY week (W1–W14)",
-    everyWeekMax: "upto {{max}} pt/wk",
+    everyWeekMax: "cap {{max}} pt/wk",
     everyWeekScope: "— All submissions go to the Lark Base Tracker",
 
     bonusTitle: "🌟 Bonus actionables",
-    bonusMax: "upto 40++ pt/wk",
+    bonusMax: "cap 40++ pt/wk",
     bonusScope: "— BOOSTERS ONLY (does NOT apply to weigh-in / steps / workouts)",
 
     legendTitle: "📌 How to read this",
