@@ -244,6 +244,8 @@ export const BOOSTERS = [
     descKey: "snapfuelW4",
     extraKey: "catchyTitle",
     tags: "#ZUSSnapFuel #ChampionsFuelChampions",
+    // W4 only: steps uncap, so one +20k bonus tier lifts the realistic target to 260.
+    weekMax: 260,
   },
   {
     wk: "W5",

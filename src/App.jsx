@@ -496,7 +496,7 @@ export default function App() {
                         <span className="post">{b.desc}</span>
                       </td>
                       <td className="wkmax">
-                        <span className="wkmax-total">{WEEK_MAX}</span>
+                        <span className="wkmax-total">{b.weekMax ?? WEEK_MAX}</span>
                       </td>
                     </tr>
                     {/* wiki link as its own row (Week + Target cells blank), so it reads as a
