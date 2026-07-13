@@ -55,6 +55,8 @@ export const CHALLENGE_START = new Date(2026, 5, 22); // 22 Jun 2026 (month is 0
 // Weigh-in is excluded — hitting the >1 kg (40 pt) tier every single week
 // isn't achievable, so it's left out of the ceiling.
 //   100 steps + 100 workouts + 40 booster (Lark + ZUS Moments) = 240/week
+// NOTE: Week 4 uniquely uncaps steps (>40k = 100, then +20 per extra 20k), so a
+// big walker can beat 240 in W4 only — see the W4 booster row's `note`.
 export const BOOSTER_MAX = 40; // booster portion (Lark + ZUS Moments)
 export const WEEK_MAX = 240; // = 200 baseline (100 steps + 100 workouts) + 40 booster
 export const BIWEEKLY_MAX = WEEK_MAX * 2; // 480 over each 2-week booster phase
@@ -93,6 +95,9 @@ export const BOOSTER_META = {
 // caller via i18n using the *Key fields, so this stays language-neutral.
 export function buildDayPlan(booster) {
   const isFirstWeek = booster.wk === "W1";
+  // Week 4 uniquely uncaps steps: >40k still = 100, then +20 for every extra 20k.
+  // Surface it as a note on the steps card that week only.
+  const stepsUncapped = booster.wk === "W4";
 
   return [
     {
@@ -122,6 +127,19 @@ export function buildDayPlan(booster) {
           cueKey: "plan.report.stepsCue",
           pts: "+100",
         },
+        // Week 4 only: steps uncap (>40k = 100, then +20 per extra 20k). Its own
+        // card — blue like the steps card, but flagged with the gold BONUS badge.
+        ...(stepsUncapped
+          ? [
+              {
+                kind: "steps",
+                badgeKey: "plan.report.bonusBadge",
+                labelKey: "plan.report.stepsW4Bonus",
+                cueKey: "plan.report.stepsW4BonusCue",
+                pts: "+20 / 20k",
+              },
+            ]
+          : []),
         {
           kind: "workout",
           labelKey: "plan.report.workout1",

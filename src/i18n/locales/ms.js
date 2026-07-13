@@ -80,7 +80,7 @@ const ms = {
     steps: {
       title: "Kiraan langkah",
       cap: "had 100/mgg",
-      desc: "Log sekali seminggu. Tangkapan skrin mana-mana apl langkah (Google Fit, Fitbit…).",
+      desc: "Log harian atau mingguan. Tangkapan skrin mana-mana apl langkah (Google Fit, Fitbit…).",
       s20k: "20k langkah",
       s25k: "25k langkah",
       s30k: "30k langkah",
@@ -167,6 +167,8 @@ const ms = {
       heading: "② Hantar laporan — sebelum Isnin depan (biar berat kosong)",
       steps: "Kiraan langkah berjalan 40k+",
       stepsCue: "jumlah langkah minggu ini · tangkapan skrin dari mana-mana apl langkah",
+      stepsW4Bonus: "Langkah tanpa had (W4 sahaja)",
+      stepsW4BonusCue: "+20 mata bagi setiap 20k tambahan melebihi 40k · tangkapan skrin langkah",
       workout1: "Senaman 1",
       workout1Cue: "hari berasingan · foto/video wajah",
       booster: "Booster: {{name}}",

@@ -80,7 +80,7 @@ const en = {
     steps: {
       title: "Step count",
       cap: "cap 100/wk",
-      desc: "Log once weekly. Screenshot of any step app (Google Fit, Fitbit…).",
+      desc: "Log daily or weekly. Screenshot of any step app (Google Fit, Fitbit…).",
       s20k: "20k steps",
       s25k: "25k steps",
       s30k: "30k steps",
@@ -164,6 +164,8 @@ const en = {
       heading: "② Submit report — by next Mon (leave weight blank)",
       steps: "40k+ Walking step count",
       stepsCue: "this week's total steps · screenshot from any step app",
+      stepsW4Bonus: "Uncapped steps (W4 only)",
+      stepsW4BonusCue: "+20 pts for every extra 20k beyond 40k · step screenshot",
       workout1: "Workout 1",
       workout1Cue: "separate day · face photo/video",
       booster: "Booster: {{name}}",

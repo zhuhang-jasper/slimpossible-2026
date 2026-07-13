@@ -2,7 +2,8 @@
 
 Distilled from the official PDF (`ZUS Slimpossible Challenge 2026.pdf`, 16 pp) and the
 Google Sheet tracker. **This file is the source of truth for `src/data.js`.** Read this
-instead of re-parsing the PDF/sheet. Last cross-checked: 2026-06-22 — `data.js` fully matches.
+instead of re-parsing the PDF/sheet. Last cross-checked: 2026-07-13 — `data.js` fully matches
+(step frequency now daily/weekly; W4-only uncapped-step bonus: >40k = 100, then +20 per extra 20k).
 
 - Sheet: https://docs.google.com/spreadsheets/d/1EJsSEJlTFtIZPupKgwq07I76MgpqXdylr9xv3JRoivI/edit
 - The point-allocation tables in the PDF are **images** (pages 5–6); they do NOT extract via
@@ -41,7 +42,7 @@ Every Monday. Photo/video of scale (feet + display visible). Only losses score.
 
 ### Step count — cap 100/wk
 
-Log once weekly. Screenshot of any step app (Google Fit, Fitbit, Apple Health, Strava…).
+Log daily or weekly. Screenshot of any step app (Google Fit, Fitbit, Apple Health, Strava…).
 | Weekly steps | Points |
 |------|--------|
 | 20,000 | 20 |
@@ -49,6 +50,10 @@ Log once weekly. Screenshot of any step app (Google Fit, Fitbit, Apple Health, S
 | 30,000 | 30 |
 | 35,000 | 35 |
 | > 40,000 | 100 |
+
+**Week 4 exception:** in W4 only, steps are **uncapped** — >40k = 100, then **+20 for every
+additional 20k**. Surfaced as a `note` on the W4 booster row (SnapFuel), not in the standing
+table above. All other weeks stay capped at 100.
 
 ### Workouts — cap 100/wk
 
@@ -61,7 +66,8 @@ On separate days (cannot do all 3 in one day). Photo/video showing your face.
 
 **Realistic weekly benchmark (`WEEK_MAX`) = 240 pts** = 100 steps + 100 workouts + 40 booster.
 Weigh-in (max 40) is **excluded** from the ceiling — the >1 kg/40-pt tier can't be banked
-every week. Bi-weekly max (`BIWEEKLY_MAX`) = 480. Cumulative over 14 weeks = 3,360.
+every week. Bi-weekly max (`BIWEEKLY_MAX`) = 480. Cumulative over 14 weeks = 3,360. (W4's
+uncapped-step exception means a big walker can beat 240 that one week — benchmark unchanged.)
 
 ## Bi-weekly boosters (30 pts Lark Base required; +10 = 40 pts with ZUS Moments post)
 

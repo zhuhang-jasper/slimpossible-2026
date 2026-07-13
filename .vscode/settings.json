@@ -66,5 +66,6 @@
   },
   "[yaml]": {
     "editor.defaultFormatter": "kennylong.kubernetes-yaml-formatter"
-  }
+  },
+  "i18n-ally.localesPaths": ["src/i18n", "src/i18n/locales"]
 }
