@@ -164,13 +164,11 @@ const ms = {
       weighInCue: "borang sendiri · pilih minggu ini · berat + foto penimbang (kaki + nombor)",
     },
     report: {
-      heading: "② Hantar laporan — sebelum Isnin depan (biar berat kosong)",
+      heading: "② Hantar laporan — Ahad (biar berat kosong)",
       steps: "Kiraan langkah berjalan 40k+",
       stepsCue: "jumlah langkah minggu ini · tangkapan skrin dari mana-mana apl langkah",
-      stepsW4Bonus: "Langkah tanpa had (W4 sahaja)",
-      stepsW4BonusCue: "+20 mata bagi setiap 20k tambahan melebihi 40k · tangkapan skrin langkah",
-      workout1: "Senaman 1",
-      workout1Cue: "hari berasingan · foto/video wajah",
+      stepsW4Bonus: "Setiap 20k langkah tambahan (W4 sahaja)",
+      stepsW4BonusCue: "atas tahap 40k · tangkapan skrin langkah",
       booster: "Booster: {{name}}",
       bonusBadge: "BONUS",
       postMoments: "Kongsi di ZUS Moments",
@@ -181,12 +179,16 @@ const ms = {
       dueNoteTail: ", atau hantar lebih awal pada hari setiap aktiviti.",
     },
     form3: {
-      workout2: "Senaman 2",
-      workout2Cue: "borang sendiri · hari berasingan · foto/video wajah · biar yang lain kosong",
+      workout1: "Senaman 1",
+      workout1Cue: "hari berasingan · foto/video wajah · biar yang lain kosong",
     },
     form4: {
+      workout2: "Senaman 2",
+      workout2Cue: "hari berasingan · foto/video wajah · biar yang lain kosong",
+    },
+    form5: {
       workout3: "Senaman 3",
-      workout3Cue: "borang sendiri · hari berasingan · foto/video wajah · dihadkan pada 3+ senaman · biar yang lain kosong",
+      workout3Cue: "hari berasingan · foto/video wajah · dihadkan pada 3+ senaman · biar yang lain kosong",
     },
   },
 

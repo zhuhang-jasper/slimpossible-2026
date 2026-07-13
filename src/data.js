@@ -113,9 +113,9 @@ export function buildDayPlan(booster) {
         },
       ],
     },
-    // The report splits across THREE Lark forms — "Type Of Activity" is single-select,
-    // so each workout needs its own form. Form 2 carries everything else (steps + workout 1
-    // + booster + bonus); Forms 3 & 4 each hold a single workout with the rest left blank.
+    // The report splits across Lark forms — "Type Of Activity" is single-select, so
+    // each workout needs its own form. Form 2 carries the non-workout items (steps +
+    // booster + bonus); Forms 3, 4 & 5 each hold a single workout with the rest blank.
     {
       group: "report",
       headingKey: "plan.report.heading",
@@ -136,16 +136,10 @@ export function buildDayPlan(booster) {
                 badgeKey: "plan.report.bonusBadge",
                 labelKey: "plan.report.stepsW4Bonus",
                 cueKey: "plan.report.stepsW4BonusCue",
-                pts: "+20 / 20k",
+                pts: "+20",
               },
             ]
           : []),
-        {
-          kind: "workout",
-          labelKey: "plan.report.workout1",
-          cueKey: "plan.report.workout1Cue",
-          pts: "+30",
-        },
         {
           kind: "booster",
           labelKey: "plan.report.booster",
@@ -165,14 +159,16 @@ export function buildDayPlan(booster) {
         },
       ],
     },
+    // Each workout is its own single-workout form (FORM 3/4/5); an additional workout
+    // would simply be a new form. Point values are the marginal table tiers: 30, +30, +40.
     {
       group: "form3",
       form: "FORM 3",
       items: [
         {
           kind: "workout",
-          labelKey: "plan.form3.workout2",
-          cueKey: "plan.form3.workout2Cue",
+          labelKey: "plan.form3.workout1",
+          cueKey: "plan.form3.workout1Cue",
           pts: "+30",
         },
       ],
@@ -183,8 +179,20 @@ export function buildDayPlan(booster) {
       items: [
         {
           kind: "workout",
-          labelKey: "plan.form4.workout3",
-          cueKey: "plan.form4.workout3Cue",
+          labelKey: "plan.form4.workout2",
+          cueKey: "plan.form4.workout2Cue",
+          pts: "+30",
+        },
+      ],
+    },
+    {
+      group: "form5",
+      form: "FORM 5",
+      items: [
+        {
+          kind: "workout",
+          labelKey: "plan.form5.workout3",
+          cueKey: "plan.form5.workout3Cue",
           pts: "+40",
         },
       ],

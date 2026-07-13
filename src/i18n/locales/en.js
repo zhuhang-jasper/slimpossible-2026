@@ -161,13 +161,11 @@ const en = {
       weighInCue: "own form · pick this week · weight + scale photo (feet + number)",
     },
     report: {
-      heading: "② Submit report — by next Mon (leave weight blank)",
+      heading: "② Submit report — Sunday (leave weight blank)",
       steps: "40k+ Walking step count",
       stepsCue: "this week's total steps · screenshot from any step app",
-      stepsW4Bonus: "Uncapped steps (W4 only)",
-      stepsW4BonusCue: "+20 pts for every extra 20k beyond 40k · step screenshot",
-      workout1: "Workout 1",
-      workout1Cue: "separate day · face photo/video",
+      stepsW4Bonus: "Every extra 20k steps (W4 only)",
+      stepsW4BonusCue: "on top of the 40k tier · step screenshot",
       booster: "Booster: {{name}}",
       bonusBadge: "BONUS",
       postMoments: "Post on ZUS Moments",
@@ -178,12 +176,16 @@ const en = {
       dueNoteTail: ", or submit earlier on the same day of each activity.",
     },
     form3: {
-      workout2: "Workout 2",
-      workout2Cue: "own form · separate day · face photo/video · leave the rest blank",
+      workout1: "Workout 1",
+      workout1Cue: "separate day · face photo/video · leave the rest blank",
     },
     form4: {
+      workout2: "Workout 2",
+      workout2Cue: "separate day · face photo/video · leave the rest blank",
+    },
+    form5: {
       workout3: "Workout 3",
-      workout3Cue: "own form · separate day · face photo/video · capped at 3+ workouts · leave the rest blank",
+      workout3Cue: "separate day · face photo/video · capped at 3+ workouts · leave the rest blank",
     },
   },
 
